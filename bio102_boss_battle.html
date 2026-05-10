@@ -1,0 +1,3365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Bio Boss Battle</title>
+<style>
+  :root {
+    --navy: #003366;
+    --navy-deep: #001a33;
+    --navy-light: #1a4d80;
+    --gold: #FDB827;
+    --gold-deep: #d99a14;
+    --gold-soft: #fff4d6;
+    --cream: #fefaf0;
+    --ink: #0a1628;
+    --ink-soft: #2a3a52;
+    --muted: #6b7a8f;
+    --line: #e4e8f0;
+    --success: #2d8659;
+    --success-bg: #e6f4ec;
+    --error: #c5364f;
+    --error-bg: #fde8ec;
+    --shadow: 0 4px 20px rgba(0, 51, 102, 0.08);
+    --shadow-lg: 0 12px 40px rgba(0, 51, 102, 0.15);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --navy: #4d8fcc;
+      --navy-deep: #0a1628;
+      --navy-light: #6ba5dc;
+      --gold: #FDB827;
+      --gold-deep: #ffd166;
+      --gold-soft: #2a2412;
+      --cream: #0f1825;
+      --ink: #e8eef5;
+      --ink-soft: #b8c5d6;
+      --muted: #8a98ab;
+      --line: #1f2d40;
+      --success: #4ec48a;
+      --success-bg: #15301f;
+      --error: #ff6b85;
+      --error-bg: #2e1219;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background:
+      radial-gradient(ellipse at top right, rgba(253, 184, 39, 0.08), transparent 50%),
+      radial-gradient(ellipse at bottom left, rgba(0, 51, 102, 0.06), transparent 50%),
+      var(--cream);
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: inherit;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input { font-family: inherit; font-size: 16px; }
+
+  .app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 100px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px 20px;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--navy);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-weight: 900;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.3);
+  }
+
+  .brand-text {
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .notebook-btn {
+    background: var(--navy);
+    color: var(--gold);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    transition: transform 0.15s;
+  }
+
+  .notebook-btn:active { transform: scale(0.96); }
+
+  .notebook-count {
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 999px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 800;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 24px 16px 32px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 20px;
+    color: var(--gold);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(253, 184, 39, 0.2), transparent 70%);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+
+  .hero-title {
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    opacity: 0.9;
+    color: #fff;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+  }
+
+  @media (prefers-color-scheme: dark) { .stat-card { background: #1a2638; } }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 8px 4px 14px;
+    font-weight: 600;
+  }
+
+  .level-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .level-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    transition: transform 0.15s, box-shadow 0.15s;
+    min-height: 76px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  @media (prefers-color-scheme: dark) { .level-card { background: #1a2638; } }
+
+  .level-card:active:not(.locked) { transform: scale(0.98); }
+  .level-card:not(.locked):hover { box-shadow: var(--shadow); }
+  .level-card.locked { opacity: 0.5; cursor: not-allowed; }
+
+  .level-card.cleared::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--gold);
+  }
+
+  .level-num {
+    width: 44px;
+    height: 44px;
+    background: var(--navy);
+    color: var(--gold);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 18px;
+    flex-shrink: 0;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+  }
+
+  .level-card.cleared .level-num {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .level-card.boss .level-num {
+    background: linear-gradient(135deg, var(--navy), var(--gold));
+    color: #fff;
+    font-size: 20px;
+  }
+
+  .level-info { flex: 1; min-width: 0; }
+
+  .level-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 3px;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+  }
+
+  .level-meta {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .level-status {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .level-card.cleared .level-status { color: var(--success); }
+
+  .quiz {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .quiz-header {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+
+  @media (prefers-color-scheme: dark) { .quiz-header { background: #1a2638; } }
+
+  .quiz-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .quiz-back {
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 4px;
+    margin: -8px -4px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  .quiz-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: center;
+    flex: 1;
+    padding: 0 8px;
+    line-height: 1.2;
+  }
+
+  .quiz-stats {
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .stat-pill {
+    background: var(--navy);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .stat-pill.hp { background: var(--error-bg); color: var(--error); }
+  .stat-pill.streak { background: var(--gold-soft); color: var(--gold-deep); }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    transition: width 0.4s ease;
+    border-radius: 999px;
+  }
+
+  .progress-text {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    animation: slideIn 0.35s ease;
+  }
+
+  @media (prefers-color-scheme: dark) { .question-card { background: #1a2638; } }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-type {
+    font-size: 10px;
+    color: var(--gold-deep);
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 18px;
+    font-weight: 500;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+  }
+
+  .q-scenario {
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    background: var(--cream);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink);
+    width: 100%;
+    min-height: 52px;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) { .option { background: #0f1825; } }
+
+  .option-letter {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  @media (prefers-color-scheme: dark) { .option-letter { background: #1a2638; } }
+
+  .option:active:not(:disabled) { transform: scale(0.98); }
+  .option:hover:not(:disabled) { border-color: var(--navy); }
+
+  .option.correct {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: var(--success);
+  }
+  .option.correct .option-letter {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+  }
+  .option.incorrect {
+    background: var(--error-bg);
+    border-color: var(--error);
+    color: var(--error);
+  }
+  .option.incorrect .option-letter {
+    background: var(--error);
+    color: #fff;
+    border-color: var(--error);
+  }
+  .option:disabled { cursor: default; }
+
+  .tf-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .tf-option {
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 12px;
+    border: 2px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 64px;
+    transition: all 0.15s;
+  }
+
+  @media (prefers-color-scheme: dark) { .tf-option { background: #0f1825; } }
+
+  .tf-option:active:not(:disabled) { transform: scale(0.96); }
+  .tf-option.correct { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+  .tf-option.incorrect { background: var(--error-bg); border-color: var(--error); color: var(--error); }
+
+  .fill-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .fill-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    font-size: 16px;
+    background: var(--cream);
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+
+  @media (prefers-color-scheme: dark) { .fill-input { background: #0f1825; } }
+
+  .fill-input:focus { outline: none; border-color: var(--navy); }
+  .fill-input.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .fill-input.incorrect { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+
+  .submit-btn {
+    background: var(--navy);
+    color: var(--gold);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    min-height: 50px;
+    transition: transform 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .submit-btn:active:not(:disabled) { transform: scale(0.97); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .feedback {
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback.correct { background: var(--success-bg); border: 1px solid var(--success); }
+  .feedback.incorrect { background: var(--error-bg); border: 1px solid var(--error); }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .feedback.correct .feedback-header { color: var(--success); }
+  .feedback.incorrect .feedback-header { color: var(--error); }
+
+  .feedback-text {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .next-btn {
+    background: var(--navy);
+    color: var(--gold);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    min-height: 52px;
+    width: 100%;
+    margin-top: 14px;
+    transition: transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .next-btn:active { transform: scale(0.97); }
+
+  .hint-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .hint-btn {
+    background: var(--gold-soft);
+    color: var(--gold-deep);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    min-height: 36px;
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hint-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .hint-text {
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  .results { text-align: center; padding: 12px 8px; }
+
+  .results-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: bounce 0.6s ease;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    color: var(--gold);
+    font-weight: 900;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+  }
+
+  .results-title {
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .results-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .results-stat {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 8px;
+    box-shadow: var(--shadow);
+  }
+
+  @media (prefers-color-scheme: dark) { .results-stat { background: #1a2638; } }
+
+  .results-stat-value {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--navy);
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .results-stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .results-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    min-height: 52px;
+    transition: transform 0.15s;
+  }
+
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.primary { background: var(--navy); color: var(--gold); }
+  .action-btn.secondary { background: var(--gold-soft); color: var(--gold-deep); border: 1px solid var(--gold); }
+  .action-btn.tertiary { background: transparent; color: var(--navy); }
+
+  .confetti {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    animation: fall 3s ease-out forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .streak-flash {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--gold);
+    color: var(--navy);
+    padding: 18px 28px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: 24px;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    box-shadow: 0 12px 40px rgba(253, 184, 39, 0.4);
+    pointer-events: none;
+    z-index: 200;
+    animation: streakPop 1.2s ease;
+    letter-spacing: -0.02em;
+  }
+
+  @keyframes streakPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -55%) scale(1); }
+  }
+
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 22, 40, 0.5);
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--cream);
+    border-radius: 24px 24px 0 0;
+    z-index: 301;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 80dvh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .drawer.open { transform: translateY(0); }
+
+  .drawer-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    margin: 12px auto 8px;
+    flex-shrink: 0;
+  }
+
+  .drawer-header {
+    padding: 12px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  .drawer-title {
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .drawer-close {
+    background: var(--line);
+    color: var(--ink);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .drawer-body {
+    overflow-y: auto;
+    padding: 16px 20px 32px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nb-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .nb-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) { .nb-item { background: #1a2638; } }
+
+  .nb-term {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 15px;
+    margin-bottom: 4px;
+    font-family: 'Iowan Old Style', 'Palatino', 'Georgia', serif;
+  }
+
+  .nb-def {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .nb-source {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (min-width: 600px) {
+    .app { padding: 24px; }
+    .hero-title { font-size: 38px; }
+    .q-text { font-size: 19px; }
+    .stats-row { gap: 14px; }
+  }
+
+  @media (min-width: 768px) {
+    .level-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="app" class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-text">Bio Boss Battle</div>
+        <div class="brand-sub">Final Exam Prep</div>
+      </div>
+    </div>
+    <button class="notebook-btn" onclick="openNotebook()">
+      Notebook
+      <span class="notebook-count" id="nb-count">0</span>
+    </button>
+  </div>
+
+  <div id="screen-home"></div>
+  <div id="screen-quiz" class="hidden"></div>
+  <div id="screen-results" class="hidden"></div>
+</div>
+
+<div class="drawer-backdrop" id="drawer-backdrop" onclick="closeNotebook()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <div class="drawer-title">Study Notebook</div>
+    <button class="drawer-close" onclick="closeNotebook()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION POOLS — drawn from actual lecture slides
+// Each level has 25–30 questions; 15 picked per playthrough
+// so re-running a level shuffles in fresh questions.
+// ============================================================
+
+const LEVELS = [
+  // ============ LEVEL 1: EVOLUTION & NATURAL SELECTION ============
+  {
+    id: 1,
+    name: "Evolution by Natural Selection",
+    short: "Evolution",
+    pool: [
+      { type: "mc",
+        q: "Which of the following is NOT one of the four requirements for natural selection?",
+        options: [
+          "Phenotypic variation exists in the population",
+          "There is a genetic basis for most phenotypes",
+          "Agents of selection operate on individuals",
+          "All individuals reproduce at equal rates"
+        ],
+        answer: 3,
+        explanation: "The fourth requirement is DIFFERENTIAL relative fitness — individuals must vary in how successfully they survive and reproduce. If everyone reproduced equally, there would be no selection.",
+        nb: { term: "4 requirements of Natural Selection", def: "1) Phenotypic variation, 2) Genetic basis for phenotypes, 3) Agents of selection, 4) Differential relative fitness." }},
+      { type: "tf",
+        q: "Individual organisms evolve over their lifetime through natural selection.",
+        answer: false,
+        explanation: "Individuals don't evolve — POPULATIONS do. Individuals can only acclimate (short-term, reversible adjustments). Evolution is a change across generations." },
+      { type: "fill",
+        q: "The observable physical or behavioral traits of an organism are called its ______.",
+        answer: ["phenotype", "phenotypes"],
+        explanation: "Phenotype = observable trait. Genotype = the genetic basis. Most phenotypes have a genetic basis, which is why they can be heritable and selected for." },
+      { type: "mc",
+        q: "In Dr. Sheil's deer mouse example, what was the AGENT of selection?",
+        options: [
+          "The deer mice themselves",
+          "The falcon (a predator)",
+          "Coat color genes",
+          "The desert environment"
+        ],
+        answer: 1,
+        explanation: "The falcon is the agent of selection — it's the predator that chooses (selects) which mice survive. Mice with paler coats stood out and got eaten; their genes were removed from the population.",
+        nb: { term: "Agent of Selection", def: "The factor (often a predator like the falcon in our deer mouse example) that operates directly on individuals to determine survival." }},
+      { type: "mc",
+        q: "Which scenario best illustrates ACCLIMATIZATION rather than adaptation?",
+        options: [
+          "A polar bear's thick fur evolved over many generations",
+          "Cacti developing spines instead of leaves",
+          "A person producing more red blood cells after moving to high altitude",
+          "Giraffes evolving long necks to reach high leaves"
+        ],
+        answer: 2,
+        explanation: "Acclimatization is a SHORT time-scale, reversible response within ONE individual's lifetime. Adaptation is a LONG time-scale change in a POPULATION via evolution by natural selection.",
+        nb: { term: "Acclimatization vs Adaptation", def: "Acclimatization: short time scale, ONE individual responding to its environment. Adaptation: long time scale, a POPULATION (involves evolution)." }},
+      { type: "fill",
+        q: "The ultimate, original source of all genetic variation in a population is ______.",
+        answer: ["mutation", "mutations"],
+        explanation: "Mutations are random changes in DNA that create new alleles — the raw material natural selection acts on. Without mutation, there would be no genetic variation to select among." },
+      { type: "tf",
+        q: "Most phenotypes have a genetic basis, which is why most phenotypes are heritable.",
+        answer: true,
+        explanation: "This is requirement #2 — genotype determines phenotype. Heritability is what allows traits favored by selection to be passed to offspring, which is what makes evolution possible." },
+      { type: "mc",
+        q: "After many generations of falcon predation in our deer mouse example, what does the descendant population look like compared to the original?",
+        options: [
+          "Wider variation in coat color",
+          "Shifted toward darker coat colors (lighter mice removed)",
+          "Identical to the original population",
+          "Shifted toward lighter coat colors"
+        ],
+        answer: 1,
+        explanation: "The falcon removed mice with the palest coats (most visible against dark soil). Those alleles dropped in frequency. The descendant population is shifted toward darker colors — that's evolution by natural selection in action.",
+        nb: { term: "Original vs Descendant Population", def: "When agents of selection remove certain phenotypes, the descendant population's allele frequencies shift away from those phenotypes." }},
+      { type: "tf",
+        q: "Natural selection and evolution mean exactly the same thing.",
+        answer: false,
+        explanation: "Natural selection is the MECHANISM (differential survival/reproduction based on traits). Evolution is the OUTCOME (change in allele frequencies across generations). Selection is one cause; evolution is the result." },
+      { type: "mc",
+        q: "Which course theme captures the relationship between an organism's structure and what it does?",
+        options: [
+          "Form follows fitness",
+          "Form fits function",
+          "Genotype determines phenotype",
+          "Acclimation precedes adaptation"
+        ],
+        answer: 1,
+        explanation: "FORM FITS FUNCTION is one of the major themes Dr. Sheil emphasizes. An organism's anatomy is shaped by what that anatomy does — selection favors structures that perform their function well." },
+      { type: "fill",
+        q: "The differential survival of individuals leading to differential reproductive success is called differential ______ ______ (two words).",
+        answer: ["relative fitness"],
+        explanation: "Relative fitness = how well an individual's genes get passed on COMPARED to others in the population. It's relative because it depends on the rest of the group, not an absolute measure." },
+      { type: "tf",
+        q: "Coat color in mammals like deer mice is determined primarily by genetics.",
+        answer: true,
+        explanation: "Background knowledge for the natural selection example: because coat color has a genetic basis, it's heritable, which means selection on coat color leads to evolution." },
+      { type: "mc",
+        q: "Which of these is studied on LONG time scales and applies to a SPECIES rather than an individual?",
+        options: [
+          "Acclimatization",
+          "Adaptation (via evolution)",
+          "Phenotypic plasticity",
+          "Homeostasis"
+        ],
+        answer: 1,
+        explanation: "Adaptation operates at the population/species level over many generations — evolutionary time. Acclimatization is what an individual does within its own life. The course theme: short time scales = individual response; long time scales = species response." },
+      { type: "scenario",
+        scenario: "A population of insects shows variation in pesticide resistance. Most insects die when sprayed, but a few survive due to a genetic mutation. The survivors reproduce, and over many generations, the resistant trait becomes common.",
+        q: "What is the AGENT of selection in this scenario?",
+        options: [
+          "The mutation",
+          "The pesticide",
+          "The resistant insects",
+          "Differential reproduction"
+        ],
+        answer: 1,
+        explanation: "The pesticide is the environmental factor doing the selecting — killing some, sparing others. Mutation creates the variation; differential reproduction is the outcome; the pesticide is what's actively choosing winners and losers.",
+        nb: { term: "Pesticide resistance example", def: "Classic case of natural selection — the pesticide is the agent of selection acting on existing variation created by mutation." }},
+      { type: "mc",
+        q: "Which is the BEST definition of evolution?",
+        options: [
+          "An individual organism changing during its lifetime",
+          "A change in the gene pool of a population over generations",
+          "The development of new species in zoos",
+          "Animals adapting consciously to their environment"
+        ],
+        answer: 1,
+        explanation: "Evolution is genetic change over generations at the population level. Individuals don't evolve, organisms don't choose to adapt, and adaptation isn't a conscious process." },
+      { type: "tf",
+        q: "Natural selection is a random process.",
+        answer: false,
+        explanation: "Mutation is random. Natural selection is NOT random — it's the non-random survival and reproduction of individuals based on their traits. Survival is determined by how well traits match the environment." },
+      { type: "fill",
+        q: "The short-time-scale, reversible physiological adjustment an individual makes to its environment is called ______.",
+        answer: ["acclimatization", "acclimation", "acclimate"],
+        explanation: "Examples: producing more red blood cells at high altitude, tanning in sunlight, building heat tolerance in summer. These reverse when the conditions change — they're not heritable." },
+      { type: "mc",
+        q: "Why is requirement #2 (genetic basis of phenotypes) essential for natural selection to drive evolution?",
+        options: [
+          "Without it, the agent of selection has nothing to choose among",
+          "Without it, traits favored by selection wouldn't pass to offspring",
+          "Without it, populations couldn't have variation",
+          "Without it, mutations couldn't occur"
+        ],
+        answer: 1,
+        explanation: "If a trait isn't heritable (no genetic basis), then selection on that trait doesn't change the next generation. You need genes to be passed down for selection to drive evolution." }
+    ]
+  },
+
+  // ============ LEVEL 2: PLANT ANATOMY (Ch 35) ============
+  {
+    id: 2,
+    name: "Plant Anatomy",
+    short: "Plant Anatomy",
+    pool: [
+      { type: "mc",
+        q: "What are the three basic plant organs?",
+        options: [
+          "Leaves, flowers, fruits",
+          "Roots, stems, leaves",
+          "Roots, shoots, flowers",
+          "Xylem, phloem, cortex"
+        ],
+        answer: 1,
+        explanation: "Roots, stems, and leaves. Roots make up the root system. Stems and leaves make up the shoot system.",
+        nb: { term: "3 basic plant organs", def: "Roots (root system), stems and leaves (shoot system)." }},
+      { type: "tf",
+        q: "Carrots are an example of a modified taproot used for storage.",
+        answer: true,
+        explanation: "Carrots, radishes, and turnips are modified taproots that store sugars and starches the plant needs for growth and flowering." },
+      { type: "fill",
+        q: "Regions of actively dividing, undifferentiated cells in plants are called ______.",
+        answer: ["meristems", "meristem"],
+        explanation: "Meristems are why plants have INDETERMINATE GROWTH (they can keep growing throughout their lifetime). Apical meristems are at root and shoot tips; lateral meristems thicken the plant.",
+        nb: { term: "Meristem", def: "Undifferentiated plant tissue from which new cells arise — enables indeterminate growth." }},
+      { type: "mc",
+        q: "Which zone of the Root Apical Meristem (RAM) is where cells primarily get LONGER?",
+        options: [
+          "Zone of Cell Division",
+          "Zone of Elongation",
+          "Zone of Differentiation",
+          "Root Cap"
+        ],
+        answer: 1,
+        explanation: "The 3 zones (in order from tip): Cell Division → Elongation → Differentiation. In Elongation, cells expand lengthwise, pushing the root tip through soil. The Root Cap protects the meristem.",
+        nb: { term: "RAM zones", def: "Root Cap → Zone of Cell Division → Zone of Elongation → Zone of Differentiation." }},
+      { type: "mc",
+        q: "Which plant tissue type provides the OUTER protective layer?",
+        options: [
+          "Ground tissue",
+          "Vascular tissue",
+          "Dermal tissue",
+          "Meristematic tissue"
+        ],
+        answer: 2,
+        explanation: "Dermal tissue (epidermis) covers the plant. Ground tissue does storage, photosynthesis, support. Vascular tissue (xylem + phloem) does long-distance transport.",
+        nb: { term: "3 plant tissue systems", def: "Dermal (outer covering), Ground (storage/photosynthesis/support), Vascular (long-distance transport)." }},
+      { type: "tf",
+        q: "Apical dominance means the apical bud INHIBITS the axillary buds.",
+        answer: true,
+        explanation: "The apical bud at the tip of the stem dominates and keeps axillary buds dormant. This concentrates resources on growing UP toward sunlight. Pruning the apical bud releases the axillaries — that's why pruning makes plants bushier." },
+      { type: "fill",
+        q: "The location where a leaf attaches to a stem is called a ______.",
+        answer: ["node"],
+        explanation: "Nodes are leaf attachment points; internodes are the regions between them. Axillary buds form between the leaf and stem above the node.",
+        nb: { term: "Node vs Internode", def: "Node = where leaves attach. Internode = stem region between nodes." }},
+      { type: "mc",
+        q: "Which is NOT one of the 3 primary tissues of the Ground Tissue System?",
+        options: [
+          "Parenchyma",
+          "Collenchyma",
+          "Sclerenchyma",
+          "Endodermis"
+        ],
+        answer: 3,
+        explanation: "Ground tissue has 3 types: Parenchyma (general/photosynthetic), Collenchyma (flexible support — celery strings), and Sclerenchyma (rigid support — lignified, dead at maturity). Endodermis is the innermost layer of the cortex around the stele.",
+        nb: { term: "Ground tissue cell types", def: "Parenchyma (general), Collenchyma (flexible support), Sclerenchyma (rigid, lignified, dead at maturity)." }},
+      { type: "mc",
+        q: "Which xylem cell type allows water to move FASTER through perforation plates at the cell ends?",
+        options: [
+          "Tracheids",
+          "Vessel elements",
+          "Sieve tube members",
+          "Companion cells"
+        ],
+        answer: 1,
+        explanation: "Vessel elements are wide and have perforation plates (less resistance, faster flow). Tracheids are narrower and use pits (more resistance, slower). Both are dead at functional maturity.",
+        nb: { term: "Xylem cells", def: "Tracheids (narrow, pits, slower) and Vessel Elements (wide, perforation plates, faster). Both dead at maturity." }},
+      { type: "tf",
+        q: "Sieve tube members in the phloem are LIVING at functional maturity but lack most organelles.",
+        answer: true,
+        explanation: "Phloem is alive (must be alive for active sugar loading), but sieve tube members lack most organelles to leave room for sugar transport. They're aided by adjacent companion cells, which keep their nucleus and run the metabolism." },
+      { type: "fill",
+        q: "The waxy coating secreted by the epidermis on non-woody parts of plants is called the ______.",
+        answer: ["cuticle"],
+        explanation: "The cuticle is a waxy layer that limits water loss. In woody parts, the epidermis is replaced by periderm (the outer layer of bark)." },
+      { type: "mc",
+        q: "Which of these is a modified STEM, NOT a modified leaf or root?",
+        options: [
+          "Carrot taproot",
+          "Cactus spines",
+          "Potato tuber",
+          "Pea plant tendrils"
+        ],
+        answer: 2,
+        explanation: "Potato tubers are modified stems (so are stolons and rhizomes). Carrots = modified roots. Cactus spines = modified leaves (the green pad is actually a photosynthetic stem). Pea tendrils = modified leaves.",
+        nb: { term: "Modified organs", def: "Stems: tuber (potato), stolon, rhizome. Leaves: spines (cactus), tendrils (pea), bracts (poinsettia). Roots: taproot storage (carrot), prop roots (corn), pneumatophores (mangrove)." }},
+      { type: "mc",
+        q: "What is the function of the ENDODERMIS in roots?",
+        options: [
+          "Production of lateral roots",
+          "Regulating uptake of substances into the stele",
+          "Storage of starch",
+          "Long-distance transport of water"
+        ],
+        answer: 1,
+        explanation: "The endodermis is the innermost layer of the cortex. With its Casparian Strip, it forces water and solutes to cross plasma membranes — giving the plant SELECTIVE CONTROL over what enters the stele.",
+        nb: { term: "Endodermis", def: "Innermost cortex layer — regulates uptake into the stele via the Casparian Strip." }},
+      { type: "fill",
+        q: "Cells of dermal tissue that form hair-like outgrowths providing defense against herbivory and water loss are called ______.",
+        answer: ["trichomes", "trichome"],
+        explanation: "Trichomes can be physical (sticky, irritating, blocking) or chemical (THC and CBD on cannabis are produced in trichomes). Hairier pea pods showed less beetle damage in Dr. Sheil's example." },
+      { type: "tf",
+        q: "Guard cells regulate gas exchange and water loss by opening and closing stomata.",
+        answer: true,
+        explanation: "Guard cells are specialized epidermal cells in leaves and stems. When turgid, they bow outward and the stoma opens (gas exchange); when flaccid, the stoma closes (conserves water)." },
+      { type: "mc",
+        q: "Which is composed primarily of ground tissue containing parenchyma cells where photosynthesis happens?",
+        options: [
+          "Xylem",
+          "Mesophyll of a leaf",
+          "Periderm",
+          "Pericycle"
+        ],
+        answer: 1,
+        explanation: "Mesophyll is the leaf's interior — palisade mesophyll (dense, photosynthetic) and spongy mesophyll (loose, gas exchange). Both are made of parenchyma cells.",
+        nb: { term: "Leaf mesophyll", def: "Palisade (dense, photosynthetic) + Spongy (loose, gas exchange). Both are parenchyma." }},
+      { type: "mc",
+        q: "Where do new LATERAL ROOTS originate?",
+        options: [
+          "From the epidermis",
+          "From the cortex",
+          "From the pericycle inside the stele",
+          "From the root cap"
+        ],
+        answer: 2,
+        explanation: "The pericycle is the outer layer of the stele, just inside the endodermis. New lateral roots form from the inside out so they can connect immediately to the vascular system, rather than having to grow back to it.",
+        nb: { term: "Pericycle", def: "Outer layer of the stele (just inside endodermis); origin of lateral roots." }},
+      { type: "tf",
+        q: "Indeterminate growth means a plant continues to grow throughout its lifetime.",
+        answer: true,
+        explanation: "Most plants are indeterminate (continuous growth via meristems). Some organs are determinate (leaves, flowers, thorns stop growing at a certain size). The 4,850-year-old bristlecone pine is the extreme case." },
+      { type: "fill",
+        q: "Modified leaves that resemble petals and surround flowers (e.g., on a poinsettia) are called ______.",
+        answer: ["bracts", "bract"],
+        explanation: "Bracts attract pollinators when actual petals are small or inconspicuous. The 'red flowers' of a poinsettia are actually red bracts surrounding tiny yellow flowers." }
+    ]
+  },
+
+  // ============ LEVEL 3: PLANT TRANSPORT (Ch 36) ============
+  {
+    id: 3,
+    name: "Plant Transport",
+    short: "Plant Transport",
+    pool: [
+      { type: "mc",
+        q: "The Casparian Strip in the endodermis forces water and minerals to take which route to enter the stele?",
+        options: [
+          "The apoplastic route only",
+          "The symplastic route via plasmodesmata",
+          "The transmembrane route, by crossing endodermal cell membranes",
+          "Bulk flow through xylem"
+        ],
+        answer: 2,
+        explanation: "The Casparian Strip is a waxy band that BLOCKS the apoplast. Water and solutes are forced to cross the endodermal plasma membrane (transmembrane route), giving the plant SELECTIVE control over what enters the stele.",
+        nb: { term: "Casparian Strip", def: "Waxy band in endodermis blocking apoplastic flow — forces transmembrane crossing for selective uptake." }},
+      { type: "tf",
+        q: "Cohesion of water is due to hydrogen bonds between water molecules.",
+        answer: true,
+        explanation: "Cohesion: water-to-water (hydrogen bonds). Adhesion: water-to-other-substances (like cell walls). Together with tension from transpiration, this is the Cohesion-Tension Theory." },
+      { type: "fill",
+        q: "When a plant cell loses water and the membrane pulls away from the cell wall, the cell is undergoing ______.",
+        answer: ["plasmolysis"],
+        explanation: "Plasmolysis happens in hypertonic environments — water exits the cell. Flaccid = lost turgor. Turgid = full of water (plasma membrane pushing against cell wall = positive pressure = turgor pressure).",
+        nb: { term: "Plasmolysis", def: "Water loss causing membrane to pull away from cell wall. Flaccid = lost turgor. Turgid = full." }},
+      { type: "mc",
+        q: "Water moves into a plant cell when the cell's water potential is:",
+        options: [
+          "Higher than the surroundings",
+          "Lower than the surroundings",
+          "Equal to the surroundings",
+          "Always zero"
+        ],
+        answer: 1,
+        explanation: "MANTRA: Water moves from HIGH water potential to LOW water potential. So water enters a cell when the cell is LOWER than its surroundings.",
+        nb: { term: "Water Potential Mantra", def: "Water moves from HIGH water potential (Ψ) to LOW. Ψw = Ψs + Ψp." }},
+      { type: "mc",
+        q: "Bulk flow of sugars in the phloem (pressure-flow) is driven by:",
+        options: [
+          "Active transport across every cell wall",
+          "Pressure differences between source and sink",
+          "Capillary action and surface tension",
+          "Transpiration pulling sugars upward"
+        ],
+        answer: 1,
+        explanation: "Sugars are loaded into phloem at sources (leaves), drawing water in by osmosis and creating high positive pressure. At sinks (roots, fruits), sugars are unloaded and pressure drops. The pressure gradient drives bulk flow.",
+        nb: { term: "Phloem bulk flow", def: "Pressure-flow from source (high pressure, loaded with sugar) to sink (low pressure, unloading)." }},
+      { type: "fill",
+        q: "The water potential equation is: Ψw = Ψs + ______ (use the symbol).",
+        answer: ["ψp", "psi p", "yp", "pressure potential", "ψ p"],
+        explanation: "Ψw (water potential) = Ψs (solute potential, always negative or 0) + Ψp (pressure potential, can be positive or negative). Solutes lower water potential; positive pressure raises it." },
+      { type: "tf",
+        q: "Adding solutes to a solution DECREASES its water potential.",
+        answer: true,
+        explanation: "Solute potential (Ψs) is always negative or zero. The more solute, the more negative Ψs becomes, lowering total water potential. So water moves TOWARD higher solute concentrations." },
+      { type: "mc",
+        q: "Apoplastic transport moves substances through:",
+        options: [
+          "Cell walls and intercellular spaces only",
+          "Cytoplasm of cells, connected by plasmodesmata",
+          "Xylem vessels under positive pressure",
+          "Across plasma membranes only"
+        ],
+        answer: 0,
+        explanation: "APOPLAST = outside the cells (cell walls + intercellular spaces). SYMPLAST = inside the cells (cytoplasm connected via plasmodesmata). TRANSMEMBRANE route = uses both, crossing membranes between cells.",
+        nb: { term: "Apoplast vs Symplast", def: "Apoplast: cell walls + spaces (outside cells). Symplast: connected cytoplasm via plasmodesmata. Transmembrane: alternates between them." }},
+      { type: "mc",
+        q: "What is the driving force behind water moving up a tall tree, according to the Cohesion-Tension Theory?",
+        options: [
+          "Active transport in xylem",
+          "Transpiration creates negative pressure (tension) at the leaves",
+          "Root pressure pushes water up",
+          "Capillary action alone"
+        ],
+        answer: 1,
+        explanation: "Transpiration (evaporation from leaves) creates tension/negative pressure that PULLS water up through the xylem. Cohesion (H-bonding between water molecules) keeps the water column intact as it moves.",
+        nb: { term: "Cohesion-Tension Theory", def: "Transpiration creates tension at leaves; cohesion (H-bonds) lets water move as continuous column up xylem." }},
+      { type: "scenario",
+        scenario: "A plant cell has solute potential Ψs = -0.7 MPa and pressure potential Ψp = +0.4 MPa. It is placed in pure water (Ψw = 0).",
+        q: "Which way will water move?",
+        options: [
+          "Out of the cell",
+          "Into the cell",
+          "No net movement",
+          "Cannot be determined"
+        ],
+        answer: 1,
+        explanation: "Cell Ψw = -0.7 + 0.4 = -0.3 MPa. Pure water Ψw = 0. Water moves from HIGH Ψw (0) to LOW Ψw (-0.3). So water enters the cell.",
+        nb: { term: "Water Potential Calculation", def: "Calculate Ψw = Ψs + Ψp for both compartments. Water flows from higher Ψw to lower Ψw." }},
+      { type: "tf",
+        q: "Xylem operates under positive pressure, while phloem operates under tension (negative pressure).",
+        answer: false,
+        explanation: "Reversed! XYLEM is under TENSION (negative pressure, pulled by transpiration). PHLOEM is under POSITIVE pressure (pushed by sugar loading at source)." },
+      { type: "mc",
+        q: "Why must the phloem be ALIVE to function, while the xylem can be dead?",
+        options: [
+          "Phloem cells need to actively load sugars against a concentration gradient",
+          "Xylem doesn't carry water",
+          "Phloem cells need to fight gravity",
+          "Xylem cells store starch"
+        ],
+        answer: 0,
+        explanation: "Phloem requires active transport to load sugars at source cells (against concentration gradients) — that needs ATP, which dead cells can't make. Xylem just carries water by passive bulk flow, so dead cells work fine." },
+      { type: "fill",
+        q: "Channels through plant cell walls connecting the cytoplasm of adjacent cells are called ______.",
+        answer: ["plasmodesmata", "plasmodesma"],
+        explanation: "Plasmodesmata are like tunnels between cells, enabling symplastic transport (movement through interconnected cytoplasm). They're crossings only seen in plant cells.",
+        nb: { term: "Plasmodesmata", def: "Cytoplasmic channels through cell walls connecting adjacent plant cells; enable symplastic transport." }},
+      { type: "scenario",
+        scenario: "A gardener notices that during a hot, dry afternoon, the leaves of one of his plants are wilting. By evening, the plant has recovered.",
+        q: "What is the most likely explanation?",
+        options: [
+          "The plant is dying from disease",
+          "Transpiration exceeded water uptake; cells lost turgor and became flaccid",
+          "Cohesion temporarily failed in the xylem",
+          "The Casparian Strip was bypassed"
+        ],
+        answer: 1,
+        explanation: "Hot/dry = high transpiration. If transpiration outpaces uptake, cells lose water and become flaccid. Once cooler/more humid air slows transpiration, water catches up and cells regain turgor.",
+        nb: { term: "Wilting", def: "Cells become flaccid (lose turgor) when transpiration exceeds water uptake." }},
+      { type: "mc",
+        q: "What term describes 'soil-plant-air-continuum' — the path water takes through the system?",
+        options: [
+          "SAM",
+          "RAM",
+          "SPAC",
+          "SOM"
+        ],
+        answer: 2,
+        explanation: "SPAC = Soil-Plant-Air-Continuum. Water moves through this continuum from high water potential (soil) to low water potential (atmosphere), pulled by transpiration.",
+        nb: { term: "SPAC", def: "Soil-Plant-Air Continuum — pathway of water from soil through plant to atmosphere." }},
+      { type: "tf",
+        q: "Active transport requires energy and moves substances AGAINST their electrochemical gradient.",
+        answer: true,
+        explanation: "Active transport: needs ATP, against gradient. Passive transport (diffusion, facilitated diffusion): no ATP, with gradient. The proton pump is a critical active-transport protein in plants." },
+      { type: "fill",
+        q: "When negative pressure becomes too great in xylem, air bubbles can form, breaking the water column. This phenomenon is called ______.",
+        answer: ["cavitation"],
+        explanation: "Cavitation breaks the continuous water column, stopping transport in that conduit. Pits between xylem cells help limit cavitation by allowing water to bypass the broken segment." },
+      { type: "mc",
+        q: "Surface tension in plants:",
+        options: [
+          "Slows down water transport",
+          "Resists bending of the air-water interface, helping create tension that pulls water upward",
+          "Only matters in marine plants",
+          "Is created by active transport"
+        ],
+        answer: 1,
+        explanation: "Surface tension makes water resist bending. As water evaporates from leaf cell walls, the curving air-water interface creates negative pressure (tension), which is transmitted down the water column via cohesion." }
+    ]
+  },
+
+  // ============ LEVEL 4: SOIL & PLANT NUTRITION (Ch 37) ============
+  {
+    id: 4,
+    name: "Soil & Plant Nutrition",
+    short: "Soil & Nutrition",
+    pool: [
+      { type: "mc",
+        q: "Which step of the nitrogen cycle converts atmospheric N₂ into ammonia (NH₃)?",
+        options: [
+          "Nitrification",
+          "Denitrification",
+          "Nitrogen fixation",
+          "Ammonification"
+        ],
+        answer: 2,
+        explanation: "N fixation: N₂ → NH₃, done by nitrogen-fixing bacteria (Rhizobia in legume nodules; free-living bacteria in soil). It's energetically expensive — 18 ATP per molecule! Plants can't fix N₂ themselves.",
+        nb: { term: "Nitrogen Fixation", def: "N₂ → NH₃, done by N-fixing bacteria (Rhizobia in roots, free-living in soil). Costs 18 ATP." }},
+      { type: "scenario",
+        scenario: "A gardener notices the older, lower leaves of her tomato plants are turning yellow first, while the new growth at the top still looks green.",
+        q: "Which nutrient is most likely deficient?",
+        options: [
+          "Nitrogen",
+          "Calcium",
+          "Iron",
+          "Boron"
+        ],
+        answer: 0,
+        explanation: "Nitrogen is PHLOEM-MOBILE. When N is scarce, the plant moves N from older leaves to support new growth — symptoms appear in OLDER leaves first. Phloem-IMMOBILE nutrients (Ca, Fe, B) show deficiency in NEW growth.",
+        nb: { term: "Phloem-mobile vs immobile", def: "Mobile (N, P, K, Mg): older leaves yellow first. Immobile (Ca, Fe): new growth shows symptoms." }},
+      { type: "tf",
+        q: "Endomycorrhizae penetrate the cell walls of root cortex cells (but NOT the plasma membrane) and form arbuscules.",
+        answer: true,
+        explanation: "Endomycorrhizae (arbuscular mycorrhizae) penetrate cell walls and form tree-like arbuscules INSIDE cells (between wall and membrane). Ectomycorrhizae form a sheath around roots and grow BETWEEN cells — they don't penetrate cell walls." },
+      { type: "fill",
+        q: "A soil with roughly equal proportions of sand, silt, and clay is called a ______.",
+        answer: ["loam"],
+        explanation: "Loam is the ideal agricultural soil — sand (drainage/aeration) + silt (moderate water holding) + clay (nutrient retention via cation exchange). Ohio's state soil 'Miamian' is a loam!",
+        nb: { term: "Loam", def: "Soil with balanced sand, silt, and clay — ideal mix of drainage and nutrient retention." }},
+      { type: "mc",
+        q: "Cation exchange in soil is important because:",
+        options: [
+          "It removes harmful anions from soil",
+          "H⁺ ions displace bound cations like K⁺ and Ca²⁺ so plants can absorb them",
+          "It converts ammonia into nitrate",
+          "It physically breaks down rock particles"
+        ],
+        answer: 1,
+        explanation: "Clay and SOM are negatively charged and SORB (hold) positive cations (K⁺, Ca²⁺, Mg²⁺). When H⁺ ions (often from H₂CO₃ around roots) displace these cations, they enter soil solution where roots can absorb them. Anions like NO₃⁻ aren't sorbed — they leach out easily.",
+        nb: { term: "Cation Exchange", def: "H⁺ displaces nutrient cations (K⁺, Ca²⁺) bound to soil/SOM, releasing them into soil solution for uptake." }},
+      { type: "mc",
+        q: "Which type of weathering involves roots creating cracks and secreting acids/enzymes?",
+        options: [
+          "Physical weathering",
+          "Chemical weathering",
+          "Biotic (biological) weathering",
+          "Mechanical weathering"
+        ],
+        answer: 2,
+        explanation: "Three types: PHYSICAL (freeze-thaw, erosion), CHEMICAL (acids in rain/soil), BIOTIC (roots, bacteria, lichens). All three break down rock to make soil.",
+        nb: { term: "Soil weathering", def: "Physical (freeze/thaw, erosion), Chemical (acids), Biotic (roots, organisms)." }},
+      { type: "tf",
+        q: "Soil Organic Matter (SOM) is negatively charged, which helps soils hold more water and nutrients.",
+        answer: true,
+        explanation: "SOM is composed of decaying plant/animal matter. Its negative charge attracts and holds cations and water — improves soil quality. SOM also makes soil 'soft' and good for root growth." },
+      { type: "fill",
+        q: "Bacteria that convert NH₄⁺ to NO₃⁻ are called ______ bacteria.",
+        answer: ["nitrifying"],
+        explanation: "Nitrification: NH₄⁺ → NO₂⁻ → NO₃⁻ via nitrifying bacteria (Nitrosomonas converts NH₄⁺ to NO₂⁻; Nitrobacter converts NO₂⁻ to NO₃⁻). Plants use both NH₄⁺ and NO₃⁻ to build organic compounds.",
+        nb: { term: "Nitrification", def: "NH₄⁺ → NO₃⁻, performed by nitrifying bacteria. Both NH₄⁺ and NO₃⁻ usable by plants." }},
+      { type: "mc",
+        q: "What do Rhizobia (bacteria) GET from their symbiotic relationship with legume roots?",
+        options: [
+          "Sugars (carbohydrates) for ATP production",
+          "Nitrogen compounds",
+          "Water",
+          "Light energy"
+        ],
+        answer: 0,
+        explanation: "It's mutualistic: Rhizobia GIVE fixed nitrogen (NH₃) and GET sugars from the plant (which they use to fuel the energy-expensive process of N₂ fixation — 18 ATP!). The plant houses them in nodules.",
+        nb: { term: "Rhizobia mutualism", def: "Rhizobia in root nodules give fixed N to plant; plant gives sugars to bacteria." }},
+      { type: "tf",
+        q: "Anions like NO₃⁻ are easily leached from soil because they aren't sorbed onto negatively charged soil particles.",
+        answer: true,
+        explanation: "Soil particles and SOM are NEGATIVELY charged, so they bind CATIONS (positives) and repel ANIONS (negatives). Nitrate is a key plant nutrient but it leaches away in heavy rain — a major source of fertilizer runoff." },
+      { type: "scenario",
+        scenario: "A friend brings over a tomato plant. It is smaller than expected and has a dark green color with a purple tinge near the veins.",
+        q: "What nutrient is most likely deficient?",
+        options: [
+          "Nitrogen",
+          "Phosphorus",
+          "Potassium",
+          "Calcium"
+        ],
+        answer: 1,
+        explanation: "Phosphorus deficiency: smaller size with DARK GREEN color and PURPLE TINGE near veins. P is part of phospholipids, nucleic acids, ATP, and several coenzymes.",
+        nb: { term: "Phosphorus deficiency", def: "Stunted with dark green/purple tinged leaves. P functions in phospholipids, DNA/RNA, ATP." }},
+      { type: "scenario",
+        scenario: "A friend brings over a tomato plant. It is smaller than expected with scorched/burned leaves, necrotic spots, and weak stems with a wilted appearance.",
+        q: "What nutrient is most likely deficient?",
+        options: [
+          "Nitrogen",
+          "Phosphorus",
+          "Potassium",
+          "Iron"
+        ],
+        answer: 2,
+        explanation: "Potassium deficiency: scorching/burning of leaves, necrotic spots, weak stems, wilted appearance. K is a cofactor in protein synthesis, an osmolyte (for cell turgor), and operates the stomata.",
+        nb: { term: "Potassium deficiency", def: "Scorched leaves, necrotic spots, weak stems. K is osmolyte, runs stomata, cofactor." }},
+      { type: "mc",
+        q: "Which soil horizon is the 'topsoil' — the most biologically rich and developed layer?",
+        options: [
+          "C horizon",
+          "B horizon",
+          "A horizon",
+          "Bedrock"
+        ],
+        answer: 2,
+        explanation: "A = topsoil (most biota, most decaying organic matter). B = intermediate, partially developed. C = least developed, mostly partially-broken-down rock. Soil develops from C up to A over time.",
+        nb: { term: "Soil Horizons", def: "C (parent rock, least developed) → B (mid-development) → A (topsoil, most life and SOM)." }},
+      { type: "fill",
+        q: "Plants that get carbon from CO₂ via photosynthesis (using light as their energy source) are called ______.",
+        answer: ["photoautotrophs", "photoautotroph"],
+        explanation: "Photo (light) + autotroph (self-feeding from inorganic CO₂) = photoautotroph. Plants! Heterotrophs (animals, fungi) must consume organic molecules to survive." },
+      { type: "tf",
+        q: "Sandy soils have larger pores and drain easily but have few sites for nutrient sorption.",
+        answer: true,
+        explanation: "Sandy: big particles → big pores → fast drainage but easy nutrient leaching. Clay: tiny particles → tiny pores → poor drainage but excellent nutrient retention. LOAM splits the difference." },
+      { type: "mc",
+        q: "Ectomycorrhizae differ from endomycorrhizae in that ectomycorrhizae:",
+        options: [
+          "Penetrate plant cell walls and form arbuscules inside cells",
+          "Form a sheath around the root and grow BETWEEN cortical cells (no penetration)",
+          "Are not symbiotic",
+          "Only grow in aquatic plants"
+        ],
+        answer: 1,
+        explanation: "ECTO (outside): sheath around root, grows BETWEEN cells, doesn't penetrate cell walls. ENDO (inside): penetrates cell walls, forms arbuscules inside cells (between wall and membrane). Both deliver phosphorus in exchange for sugars." },
+      { type: "mc",
+        q: "Why are soil bacteria critical for plant nitrogen nutrition?",
+        options: [
+          "Plants can't use atmospheric N₂; only bacteria can fix it into a usable form",
+          "Bacteria photosynthesize for plants",
+          "Bacteria make potassium for plants",
+          "Bacteria provide water to plants"
+        ],
+        answer: 0,
+        explanation: "Atmosphere is 79% N₂ — but plants and animals can't use N₂. Only certain bacteria have nitrogenase, the enzyme to convert N₂ → NH₃. Without N-fixing bacteria, life on Earth would have very little usable nitrogen." },
+      { type: "fill",
+        q: "Bacteria that convert nitrate (NO₃⁻) back to atmospheric N₂ are called ______ bacteria.",
+        answer: ["denitrifying"],
+        explanation: "Denitrification completes the N cycle: NO₃⁻ → N₂. Happens in low-oxygen soils. The full cycle: N₂ → NH₃ (fixation) → NH₄⁺ → NO₃⁻ (nitrification) → back to N₂ (denitrification). Ammonification breaks down organic N back to NH₃." }
+    ]
+  },
+
+  // ============ LEVEL 5: PLANT HORMONES (Ch 39) ============
+  {
+    id: 5,
+    name: "Plant Hormones & Growth",
+    short: "Plant Hormones",
+    pool: [
+      { type: "mc",
+        q: "According to the Acid-Growth Hypothesis, auxin causes cell elongation by:",
+        options: [
+          "Directly breaking the cellulose microfibrils",
+          "Activating proton pumps that acidify the cell wall, allowing expansins to loosen it",
+          "Increasing cell division in the meristem",
+          "Producing more cellulose to expand the wall"
+        ],
+        answer: 1,
+        explanation: "Auxin moves from the SAM to the Zone of Elongation. It activates proton pumps to push H⁺ into the cell wall. The acidified wall activates EXPANSINS, which cut cross-links between cellulose and sugar, loosening the wall. Water enters by osmosis and the cell elongates.",
+        nb: { term: "Acid-Growth Hypothesis", def: "Auxin → H⁺ pumps acidify wall → expansins loosen cross-links → water enters → cell elongates." }},
+      { type: "mc",
+        q: "Etiolation describes plant growth in:",
+        options: [
+          "Light",
+          "Darkness",
+          "High humidity",
+          "Drought"
+        ],
+        answer: 1,
+        explanation: "Etiolation = growth in DARKNESS: long spindly stems (stretching for light), tiny pointed leaves, little/no chlorophyll (yellow color), few roots. De-etiolation (greening) reverses this once light hits.",
+        nb: { term: "Etiolation", def: "Growth in darkness — long spindly stems, tiny pale leaves, no chlorophyll." }},
+      { type: "fill",
+        q: "The plant hormone primarily responsible for closing stomata during drought stress is ______.",
+        answer: ["abscisic acid", "aba"],
+        explanation: "Abscisic acid (ABA) = the 'stress hormone'. Made in roots when soil dries; sent to leaves; closes stomata to conserve water. ABA also enforces seed dormancy.",
+        nb: { term: "Abscisic Acid (ABA)", def: "Stress hormone — closes stomata in drought, maintains seed dormancy. ABA > GA = dormant." }},
+      { type: "mc",
+        q: "A vine that grows toward and wraps around a trellis is showing:",
+        options: [
+          "Phototropism",
+          "Gravitropism",
+          "Thigmomorphogenesis",
+          "Photomorphogenesis"
+        ],
+        answer: 2,
+        explanation: "THIGMOmorphogenesis = growth response to TOUCH (Greek: 'thigma' = touch). Vines/tendrils wrapping = classic example. Wind-stunted trees too. Phototropism = response to light direction. Gravitropism = response to gravity. Photomorphogenesis = light-driven developmental change (like de-etiolation).",
+        nb: { term: "Tropisms & Morphogenesis", def: "Phototropism (light direction), Gravitropism (gravity), Thigmomorphogenesis (touch), Photomorphogenesis (light-driven development)." }},
+      { type: "mc",
+        q: "Gibberellins (GA) are best known for promoting:",
+        options: [
+          "Stomatal closure",
+          "Stem elongation and seed germination",
+          "Fruit ripening",
+          "Programmed cell death"
+        ],
+        answer: 1,
+        explanation: "GA = stem ELONGATION + seed GERMINATION (breaks dormancy after imbibition by triggering enzymes that break down starch in the seed). GA also helps fruit growth (paired with auxin to make seedless grapes bigger). Ethylene = ripening; ABA = dormancy.",
+        nb: { term: "Gibberellins (GA)", def: "Promote stem elongation and seed germination. GA > ABA in seed = germination." }},
+      { type: "tf",
+        q: "Auxin is transported in plants via POLAR transport — moving in only one direction.",
+        answer: true,
+        explanation: "Polar transport of auxin = unidirectional flow through parenchyma cells (typically from shoot tip downward). It's how auxin distribution gets asymmetric, which drives phototropism and gravitropism." },
+      { type: "fill",
+        q: "The 3 stages of any signal transduction pathway are: Reception, ______, Response.",
+        answer: ["transduction"],
+        explanation: "RECEPTION (signal hits receptor) → TRANSDUCTION (relay molecules amplify message, e.g., second messengers like cGMP, Ca²⁺) → RESPONSE (cellular change, e.g., transcription, post-translational modification).",
+        nb: { term: "Signal Transduction Pathway", def: "Reception → Transduction → Response. Used by hormones and external signals." }},
+      { type: "scenario",
+        scenario: "A houseplant on a windowsill bends toward the window over several days.",
+        q: "Which hormone is responsible for this bending, and where does it accumulate?",
+        options: [
+          "ABA, on the lit side",
+          "Auxin, on the shaded side",
+          "Gibberellin, on the lit side",
+          "Cytokinin, on the shaded side"
+        ],
+        answer: 1,
+        explanation: "Auxin redistributes to the SHADED side and stimulates cell elongation there. The shaded side grows longer, bending the stem toward the light. This is positive phototropism.",
+        nb: { term: "Phototropism mechanism", def: "Auxin migrates to shaded side → cells elongate on shaded side → stem bends toward light." }},
+      { type: "tf",
+        q: "Roots show NEGATIVE gravitropism, growing AGAINST gravity.",
+        answer: false,
+        explanation: "Reversed! ROOTS show POSITIVE gravitropism (grow WITH gravity, downward). SHOOTS show NEGATIVE gravitropism (grow AGAINST gravity, upward). Both involve auxin redistribution influenced by statoliths (starch grains)." },
+      { type: "mc",
+        q: "What are statoliths, and what do they do?",
+        options: [
+          "Light-sensing pigments that detect direction",
+          "Starch grains that settle by gravity and influence auxin distribution",
+          "Stomatal-control proteins",
+          "Cell wall enzymes that loosen cross-links"
+        ],
+        answer: 1,
+        explanation: "Statoliths are starch grains in plant cells that move/settle in response to gravity, then influence auxin distribution. In roots, statolith movement increases auxin on the lower side, slowing elongation there → root bends down. In shoots, the opposite (auxin makes lower side grow more, bending stem up).",
+        nb: { term: "Statoliths", def: "Starch grains that settle by gravity and influence auxin distribution → cause gravitropism." }},
+      { type: "fill",
+        q: "The receptor inside the cytoplasm that detects light and triggers de-etiolation is ______.",
+        answer: ["phytochrome"],
+        explanation: "Phytochrome = light receptor inside cytoplasm. When activated by light, it triggers two transduction pathways (cGMP and Ca²⁺) that ultimately produce de-etiolation response proteins via transcription." },
+      { type: "tf",
+        q: "Under flooded conditions, plants produce ETHYLENE, which causes some root cells to undergo programmed cell death (apoptosis), creating air channels.",
+        answer: true,
+        explanation: "Flooded soil = no oxygen for roots. Plants synthesize ethylene; ethylene triggers apoptosis in some root cells, creating AIR CHANNELS (aerenchyma) so the rest of the root can still get oxygen from the air above." },
+      { type: "mc",
+        q: "Which hormone is used commercially as a 'rooting hormone' to encourage adventitious roots in plant cuttings?",
+        options: [
+          "Gibberellin",
+          "Auxin",
+          "Abscisic acid",
+          "Ethylene"
+        ],
+        answer: 1,
+        explanation: "Auxin's main natural roles include adventitious root growth — perfect for the greenhouse industry. Apply auxin to a cutting and it grows roots from the cut end. Synthetic auxin (2,4-D) is also used as a HERBICIDE (eudicots can't break it down → death by overgrowth)." },
+      { type: "fill",
+        q: "Changes in plant growth and development in response to LIGHT (e.g., greening, flowering) are called ______.",
+        answer: ["photomorphogenesis"],
+        explanation: "Photomorphogenesis = light-driven developmental changes. Different from phototropism (just direction of bending). Includes stem elongation control, greening response, seed germination, flowering." },
+      { type: "mc",
+        q: "If you remove the apical bud (tip) of a plant, what happens?",
+        options: [
+          "All growth stops",
+          "Axillary buds break dormancy and grow into lateral shoots — pruning makes plants bushier",
+          "The plant immediately dies",
+          "Roots stop growing"
+        ],
+        answer: 1,
+        explanation: "Removing the apical bud removes the source of auxin enforcing apical dominance. Axillary buds break dormancy and grow as lateral branches — the plant becomes bushier. This is why gardeners pinch tips back.",
+        nb: { term: "Apical dominance", def: "Apical bud's auxin keeps axillary buds dormant. Remove tip → axillaries grow → bushier plant." }},
+      { type: "tf",
+        q: "When the ratio of ABA to GA is HIGH, a seed remains dormant.",
+        answer: true,
+        explanation: "ABA > GA: dormant. ABA < GA: germinates. Desert seeds wait until rainfall has leached enough ABA away (so the seed only sprouts when there's enough water for survival)." },
+      { type: "scenario",
+        scenario: "A plant biologist sprays a dwarf pea plant with a hormone. Within weeks, the plant has grown to normal height with much taller stems.",
+        q: "Which hormone was likely applied?",
+        options: [
+          "Abscisic acid",
+          "Auxin only",
+          "Gibberellin",
+          "Ethylene"
+        ],
+        answer: 2,
+        explanation: "Gibberellins (GA) drive stem elongation. 'Bolting' (rapid stem elongation before flowering) is GA-driven. Dwarf plants often have a GA deficiency or insensitivity — restore GA, restore height." },
+      { type: "mc",
+        q: "Which is NOT a typical de-etiolation response when an etiolated plant is exposed to light?",
+        options: [
+          "Stems become shorter and sturdier",
+          "Leaves expand and turn green",
+          "Roots develop more fully",
+          "Stems grow even longer and lose their chlorophyll"
+        ],
+        answer: 3,
+        explanation: "De-etiolation is the REVERSAL of etiolation. Long spindly stems → sturdy. Tiny pale leaves → broad and green. Few roots → developed roots. The plant 'greens up' once it has light." }
+    ]
+  },
+
+  // ============ LEVEL 6: ANIMAL TISSUES & HOMEOSTASIS (Ch 40) ============
+  {
+    id: 6,
+    name: "Animal Tissues & Homeostasis",
+    short: "Tissues & Homeostasis",
+    pool: [
+      { type: "mc",
+        q: "Which is NOT one of the four basic animal tissue types?",
+        options: [
+          "Epithelial",
+          "Connective",
+          "Vascular",
+          "Nervous"
+        ],
+        answer: 2,
+        explanation: "The 4 animal tissue types: EPITHELIAL, CONNECTIVE, MUSCLE, NERVOUS. 'Vascular tissue' is a PLANT term (xylem/phloem). In animals, blood is actually a CONNECTIVE tissue.",
+        nb: { term: "4 animal tissue types", def: "Epithelial, Connective, Muscle, Nervous." }},
+      { type: "tf",
+        q: "Endotherms generate most of their body heat through metabolism, while ectotherms rely largely on environmental sources.",
+        answer: true,
+        explanation: "ENDOtherm = generates heat from within (metabolism). ECTOtherm = body temp regulated by external environment. Endotherms are regulators; ectotherms tend to be conformers. Endothermy is energetically expensive!" },
+      { type: "fill",
+        q: "A nutritional Calorie (capital C) is equivalent to 1 ______.",
+        answer: ["kilocalorie", "kcal", "kilo calorie"],
+        explanation: "1 Calorie (food) = 1 kcal = 1,000 small calories = 4,187 joules. So a 200-Calorie snack contains 200,000 small calories. Capitalization matters!" },
+      { type: "scenario",
+        scenario: "When body temperature rises, the hypothalamus detects it and triggers sweating. As body temperature returns to normal, sweating stops.",
+        q: "In this homeostatic loop, the hypothalamus is the:",
+        options: [
+          "Receptor",
+          "Control center",
+          "Effector",
+          "Set point"
+        ],
+        answer: 1,
+        explanation: "Receptor: detects change. Control center: processes info, decides response (the hypothalamus here). Effector: carries out the response (sweat glands). This is NEGATIVE feedback — response opposes the original change.",
+        nb: { term: "Homeostatic loop", def: "Receptor → Control Center → Effector. Negative feedback opposes change; positive feedback amplifies." }},
+      { type: "mc",
+        q: "Sitting next to a campfire and feeling warm is heat transfer primarily by:",
+        options: [
+          "Conduction",
+          "Convection",
+          "Radiation",
+          "Evaporation"
+        ],
+        answer: 2,
+        explanation: "RADIATION = electromagnetic waves; no contact required. CONDUCTION = direct contact. CONVECTION = heat moved by fluid (air or liquid) flow. EVAPORATION = phase change of water cools the surface left behind.",
+        nb: { term: "4 modes of heat exchange", def: "Radiation (EM waves), Conduction (contact), Convection (fluid flow), Evaporation (phase change)." }},
+      { type: "tf",
+        q: "Skeletal muscle is voluntary, while cardiac and smooth muscle are involuntary.",
+        answer: true,
+        explanation: "Skeletal: voluntary, attached to skeleton, multinucleated/striated. Cardiac: involuntary, only in heart, striated, with intercalated disks. Smooth: involuntary, in internal organs, no striations." },
+      { type: "fill",
+        q: "Bone, blood, cartilage, and adipose are all examples of ______ tissue.",
+        answer: ["connective"],
+        explanation: "Connective tissue = cells in extracellular matrix. Functions: support, protection, binding. Subtypes: loose, fibrous (tendons/ligaments), adipose (fat), cartilage, bone, blood." },
+      { type: "mc",
+        q: "Epithelial cells are characterized as 'simple' or 'stratified' based on:",
+        options: [
+          "Cell shape",
+          "Number of cell layers",
+          "Function",
+          "Location in body"
+        ],
+        answer: 1,
+        explanation: "Layers: SIMPLE (1 layer), STRATIFIED (multiple layers), PSEUDOSTRATIFIED (looks like multiple but isn't). Shape: SQUAMOUS (flat), CUBOIDAL (cube-like), COLUMNAR (column-like). The two terms together describe an epithelial tissue (e.g., 'simple squamous').",
+        nb: { term: "Epithelial naming", def: "Layers (simple/stratified/pseudostratified) + shape (squamous/cuboidal/columnar). Example: simple cuboidal." }},
+      { type: "mc",
+        q: "Which is one of the 3 types of fibers in connective tissue's extracellular matrix?",
+        options: [
+          "Cellulose fibers",
+          "Collagenous fibers (collagen)",
+          "Lignin fibers",
+          "Sclerenchyma fibers"
+        ],
+        answer: 1,
+        explanation: "3 fiber types in connective tissue: COLLAGENOUS (strength + flexibility, made of collagen), ELASTIC (rubbery, springs back, made of elastin), RETICULAR (joins connective tissue to other tissue, made of collagen + reticulin).",
+        nb: { term: "3 connective tissue fibers", def: "Collagenous (strength/flexibility), Elastic (rubbery), Reticular (joining tissues)." }},
+      { type: "tf",
+        q: "Smaller animals tend to have HIGHER metabolic rates per kilogram than larger animals.",
+        answer: true,
+        explanation: "Smaller body = higher SA:V ratio = more heat loss = higher metabolic rate per kg to maintain body temp. A mouse burns way more calories per gram of body weight than an elephant does." },
+      { type: "fill",
+        q: "The metabolic rate of a resting endotherm at thermoneutral conditions (e.g., a sleeping mammal) is called ______ ______ ______ (3 words).",
+        answer: ["basal metabolic rate", "bmr"],
+        explanation: "BMR = endotherm at rest. SMR (Standard Metabolic Rate) = ectotherm at rest, measured at a specific temperature (since ectotherms vary with environment). Both indicate energy needed for basic functions.",
+        nb: { term: "BMR vs SMR", def: "BMR: resting endotherm. SMR: resting ectotherm (specified temperature)." }},
+      { type: "mc",
+        q: "Animals that maintain stable internal conditions despite external variation are called:",
+        options: [
+          "Conformers",
+          "Regulators",
+          "Endotherms only",
+          "Homeotherms"
+        ],
+        answer: 1,
+        explanation: "REGULATORS use internal control (homeostasis) to keep things steady regardless of outside conditions. CONFORMERS let internal conditions match external conditions. No animal is a perfect regulator or conformer — most are somewhere on a spectrum." },
+      { type: "tf",
+        q: "Positive feedback loops AMPLIFY the original change, like a 'snowball effect.'",
+        answer: true,
+        explanation: "Positive feedback magnifies the change (e.g., labor contractions, blood clotting, action potentials at threshold). Negative feedback opposes change (most homeostasis: temperature, blood glucose, blood pressure)." },
+      { type: "scenario",
+        scenario: "Birds sit on cold water in winter without losing all their body heat through their feet. Their veins and arteries in the legs are arranged in close proximity, and warm blood from the body warms cold blood returning from the feet.",
+        q: "What circulatory adaptation is this?",
+        options: [
+          "Vasodilation",
+          "Countercurrent heat exchanger",
+          "Vasoconstriction",
+          "Insulation"
+        ],
+        answer: 1,
+        explanation: "Countercurrent heat exchanger: arteries and veins in close proximity, flowing in opposite directions. Heat transfers from warm arterial blood to cooler venous blood, recycling heat back to the body core. Critical adaptation in birds, marine mammals, and many fish.",
+        nb: { term: "Countercurrent exchanger", def: "Arteries near veins; heat transfers between them; minimizes heat loss to extremities." }},
+      { type: "mc",
+        q: "Vasoconstriction near the skin surface helps animals:",
+        options: [
+          "Lose heat to the environment",
+          "Conserve heat (less blood near cold surface)",
+          "Speed up sweating",
+          "Increase metabolic rate"
+        ],
+        answer: 1,
+        explanation: "Vasoconstriction = blood vessels narrow → less blood near skin → less heat loss. Vasodilation = vessels widen → more blood near skin → more heat dissipated. That's why your hands turn pale in cold and red when overheated." },
+      { type: "fill",
+        q: "Body temperature regulation is one specific example of ______, the maintenance of internal body conditions within a tolerable range.",
+        answer: ["homeostasis", "thermoregulation"],
+        explanation: "Homeostasis = 'steady state' — dynamic process where internal mechanisms oppose changes from external factors. Thermoregulation is one form of homeostasis. Others: pH, osmotic balance, blood glucose." },
+      { type: "tf",
+        q: "Cardiac muscle has intercalated disks that connect cells, allowing coordinated contractions.",
+        answer: true,
+        explanation: "Intercalated disks are the unique feature of cardiac muscle — they create electrical and mechanical connections between heart muscle cells, allowing the whole heart to contract as a unit." },
+      { type: "mc",
+        q: "Sweating cools the body primarily through which mechanism?",
+        options: [
+          "Conduction to the air",
+          "Evaporation of water",
+          "Radiation of heat away",
+          "Convection of body fluid"
+        ],
+        answer: 1,
+        explanation: "Evaporation: water on skin gains energy (heat) from the body and evaporates, taking that heat away. This is why humid days feel hotter — evaporation is harder when air is already saturated with water." },
+      { type: "fill",
+        q: "The cells in connective tissue that secrete the proteins making up extracellular matrix fibers are called ______.",
+        answer: ["fibroblasts", "fibroblast"],
+        explanation: "Fibroblasts produce collagen, elastin, etc. Macrophages (the other key connective tissue cell) phagocytize debris and dead cells." }
+    ]
+  },
+
+  // ============ LEVEL 7: NEURONS & ACTION POTENTIALS (Ch 48) ============
+  {
+    id: 7,
+    name: "Neurons & Action Potentials",
+    short: "Neurons & APs",
+    pool: [
+      { type: "mc",
+        q: "During the RISING phase of an action potential, which channels are opening?",
+        options: [
+          "Voltage-gated K⁺ channels",
+          "Voltage-gated Na⁺ channels",
+          "Ligand-gated Cl⁻ channels",
+          "Mechanically-gated Ca²⁺ channels"
+        ],
+        answer: 1,
+        explanation: "Threshold (~-55 mV) opens voltage-gated Na⁺ channels → Na⁺ rushes IN → inside becomes more positive (RISING/depolarization). Then Na⁺ channels inactivate, K⁺ channels open → K⁺ rushes OUT → repolarization (FALLING phase). Brief undershoot before resting potential restored.",
+        nb: { term: "AP phases", def: "Resting → Depolarization → Rising (Na⁺ in) → Falling (K⁺ out) → Undershoot → Resting." }},
+      { type: "tf",
+        q: "Action potentials follow the all-or-none principle: a stimulus either reaches threshold and triggers a full AP, or no AP fires.",
+        answer: true,
+        explanation: "Once threshold is crossed, every AP has the same magnitude. Stronger stimuli are encoded by FREQUENCY of APs, not by larger AP amplitude." },
+      { type: "fill",
+        q: "The fatty insulating layer wrapping many axons that speeds up signal conduction is the ______ ______.",
+        answer: ["myelin sheath", "myelin"],
+        explanation: "Myelin sheath: produced by Schwann cells (PNS) or oligodendrocytes (CNS). APs jump between gaps called Nodes of Ranvier — saltatory conduction, much faster than continuous conduction.",
+        nb: { term: "Myelin", def: "Insulation around axons. Made by Schwann cells (PNS) or oligodendrocytes (CNS). Enables saltatory conduction." }},
+      { type: "scenario",
+        scenario: "A patient progressively loses motor function (movement, eventually breathing). Cognition and senses are completely normal. Imaging shows degeneration of motor neurons specifically.",
+        q: "These symptoms are most consistent with:",
+        options: [
+          "Multiple Sclerosis (MS)",
+          "Amyotrophic Lateral Sclerosis (ALS)",
+          "Alzheimer's disease",
+          "Parkinson's disease"
+        ],
+        answer: 1,
+        explanation: "ALS (Lou Gehrig's disease): targets MOTOR NEURONS specifically. Progressive paralysis, normal cognition. Lou Gehrig and Stephen Hawking are famous examples. MS, by contrast, is autoimmune destruction of MYELIN SHEATHS in CNS and PNS — variable symptoms.",
+        nb: { term: "ALS vs MS", def: "ALS: motor neuron degeneration, cognition intact. MS: autoimmune destruction of myelin (CNS+PNS), varied symptoms." }},
+      { type: "mc",
+        q: "Multiple subthreshold inputs arriving at the same dendrite in rapid succession can combine to trigger an AP. This is called:",
+        options: [
+          "Spatial summation",
+          "Temporal summation",
+          "Saltatory conduction",
+          "Synaptic facilitation"
+        ],
+        answer: 1,
+        explanation: "TEMPORAL summation: same input firing rapidly in time. SPATIAL summation: multiple inputs from different locations arriving at once. Both happen at the axon hillock — where the neuron 'decides' whether to fire.",
+        nb: { term: "Summation", def: "Temporal: rapid firing from one input. Spatial: simultaneous inputs from multiple sources. Both integrate at axon hillock." }},
+      { type: "fill",
+        q: "The location on a neuron where the action potential is initiated is the ______ ______.",
+        answer: ["axon hillock"],
+        explanation: "Axon hillock = where cell body meets axon. It integrates all incoming EPSPs (excitatory postsynaptic potentials) and IPSPs (inhibitory) via summation. If the integrated signal exceeds threshold, an AP is generated and propagated down the axon.",
+        nb: { term: "Axon Hillock", def: "Where cell body meets axon — integrates inputs and initiates the action potential." }},
+      { type: "tf",
+        q: "Endocrine signals are typically slower and more widespread than nervous system signals.",
+        answer: true,
+        explanation: "Endocrine: hormones via bloodstream — slow, can be widespread, long-lasting. Nervous: electrical signals via specific neurons — fast, target-specific, short-lasting." },
+      { type: "mc",
+        q: "At a CHEMICAL synapse, what triggers the release of neurotransmitter?",
+        options: [
+          "K⁺ efflux from the postsynaptic cell",
+          "Ca²⁺ influx into the synaptic terminal of the presynaptic cell",
+          "Direct electrical current jumping the cleft",
+          "Active pumping of neurotransmitters"
+        ],
+        answer: 1,
+        explanation: "AP arrives at synaptic terminal → voltage-gated Ca²⁺ channels open → Ca²⁺ rushes in → Ca²⁺ triggers synaptic vesicles to fuse with membrane → neurotransmitters released into cleft → bind to ligand-gated channels on postsynaptic cell.",
+        nb: { term: "Chemical synapse cascade", def: "AP → Ca²⁺ in → vesicles fuse → neurotransmitters released → bind ligand-gated channels." }},
+      { type: "mc",
+        q: "Which of the following is NOT a type of gated ion channel covered in class?",
+        options: [
+          "Ligand-gated",
+          "Voltage-gated",
+          "Mechanically-gated",
+          "Pressure-gated"
+        ],
+        answer: 3,
+        explanation: "3 gated channel types: LIGAND-gated (open when chemical binds — like postsynaptic neurotransmitter receptors), VOLTAGE-gated (open at specific membrane potentials — drive APs), MECHANICALLY-gated (open in response to physical force — like inner ear hair cells).",
+        nb: { term: "3 gated ion channel types", def: "Ligand-gated, Voltage-gated, Mechanically-gated." }},
+      { type: "tf",
+        q: "The resting potential is maintained by the Na⁺/K⁺ pump, negatively charged molecules inside the cell, and open K⁺ leak channels.",
+        answer: true,
+        explanation: "All three contribute to resting potential (~-70 mV): (1) Na⁺/K⁺ pump uses ATP to pump 3 Na⁺ out and 2 K⁺ in. (2) Negatively charged proteins/RNA stay inside. (3) K⁺ leak channels let some K⁺ out, making inside more negative." },
+      { type: "fill",
+        q: "Cells of the nervous system that support neurons (forming myelin, providing nutrients, regulating ions) are called ______ cells.",
+        answer: ["glial", "glia", "neuroglia"],
+        explanation: "Glial cells outnumber neurons 10–50x. Types: Astrocytes (CNS support), Oligodendrocytes (CNS myelin), Schwann cells (PNS myelin), Microglia (CNS immune), Satellite cells (PNS support).",
+        nb: { term: "Glial cells", def: "Support cells: Astrocytes, Oligodendrocytes (CNS myelin), Schwann cells (PNS myelin), Microglia." }},
+      { type: "mc",
+        q: "Which type of postsynaptic potential brings the postsynaptic cell CLOSER to threshold?",
+        options: [
+          "EPSP — excitatory postsynaptic potential",
+          "IPSP — inhibitory postsynaptic potential",
+          "RPSP — resting postsynaptic potential",
+          "HPSP — hyperpolarizing postsynaptic potential"
+        ],
+        answer: 0,
+        explanation: "EPSP = depolarizing (e.g., Na⁺ enters), brings cell closer to threshold → more likely to fire AP. IPSP = hyperpolarizing (e.g., K⁺ leaves), pushes cell further from threshold → less likely to fire.",
+        nb: { term: "EPSP vs IPSP", def: "EPSP: excitatory, depolarizes (closer to threshold). IPSP: inhibitory, hyperpolarizes (further from threshold)." }},
+      { type: "mc",
+        q: "What is HYPERPOLARIZATION?",
+        options: [
+          "Membrane becomes more positive than resting",
+          "Membrane becomes more negative than resting",
+          "Membrane potential is unchanged",
+          "Sodium channels open"
+        ],
+        answer: 1,
+        explanation: "Hyperpolarization: membrane potential becomes MORE NEGATIVE than resting (e.g., from -70 to -80 mV). Often via K⁺ efflux. Depolarization is the opposite: membrane becomes more positive (less negative)." },
+      { type: "scenario",
+        scenario: "A neuron's axon has a small diameter and lacks myelin.",
+        q: "How does this affect signal conduction?",
+        options: [
+          "It speeds up conduction",
+          "It slows down conduction",
+          "It prevents conduction entirely",
+          "It has no effect"
+        ],
+        answer: 1,
+        explanation: "Conduction speed increases with: (1) WIDER axons (less internal resistance) and (2) MYELINATED axons (saltatory conduction, jumping between Nodes of Ranvier). A thin, unmyelinated axon is the slow scenario.",
+        nb: { term: "Conduction speed", def: "Faster with: wider axons, myelination (saltatory conduction)." }},
+      { type: "fill",
+        q: "The space between the synaptic terminal of one neuron and the membrane of another cell is called the ______ ______.",
+        answer: ["synaptic cleft", "synapse"],
+        explanation: "Synaptic cleft = the gap. About 20–40 nm at chemical synapses. At electrical synapses (much rarer), the gap is only ~3.5 nm and connected by gap junctions for direct ion flow." },
+      { type: "tf",
+        q: "After an action potential, the brief 'undershoot' period prevents the AP from traveling backward and maintains unidirectional propagation along the axon.",
+        answer: true,
+        explanation: "During undershoot, the just-fired region is hyperpolarized and Na⁺ channels are still inactivated → can't fire again immediately. This 'refractory period' makes the AP only travel forward toward the synaptic terminal." },
+      { type: "mc",
+        q: "What separates a Sensory Neuron, Interneuron, and Motor Neuron functionally?",
+        options: [
+          "All do the same thing — only the location differs",
+          "Sensory: detects stimuli. Interneuron: integrates info. Motor: signals effectors (muscles/glands)",
+          "Sensory neurons only exist in the brain",
+          "Motor neurons only signal other neurons, not effectors"
+        ],
+        answer: 1,
+        explanation: "3 stages of info processing: SENSORY input (sensory neurons detect stimuli), INTEGRATION (interneurons in CNS process), MOTOR output (motor neurons signal muscles/glands). It's the basic information flow of any nervous system.",
+        nb: { term: "3 neuron functional types", def: "Sensory (input), Interneuron (integration in CNS), Motor (output to effectors)." }},
+      { type: "mc",
+        q: "Which neurotransmitter is released at the neuromuscular junction to trigger muscle contraction?",
+        options: [
+          "Dopamine",
+          "Serotonin",
+          "Acetylcholine (ACh)",
+          "GABA"
+        ],
+        answer: 2,
+        explanation: "ACh = excitatory in vertebrate PNS. Released by motor neurons; binds to receptors on muscle membrane; triggers muscle depolarization and contraction. (GABA: inhibitory in CNS. Glutamate: excitatory in CNS.)" },
+      { type: "fill",
+        q: "Membrane potentials that are smaller than action potentials and don't propagate the full length of the axon are called ______ potentials.",
+        answer: ["graded"],
+        explanation: "Graded potentials = small, local, can be hyperpolarizing or depolarizing. They sum at the axon hillock. If summation is enough to cross THRESHOLD, an action potential (all-or-none, full size) fires." }
+    ]
+  },
+
+  // ============ LEVEL 8: BRAIN ANATOMY (Ch 49) ============
+  {
+    id: 8,
+    name: "Brain Anatomy",
+    short: "Brain Anatomy",
+    pool: [
+      { type: "mc",
+        q: "Gray matter in the brain consists primarily of:",
+        options: [
+          "Myelinated axons",
+          "Cell bodies (somas) and dendrites of neurons",
+          "Cerebrospinal fluid",
+          "Connective tissue"
+        ],
+        answer: 1,
+        explanation: "GRAY matter = somas and dendrites (the processing/computing parts). WHITE matter = myelinated axons (the wiring connecting different regions). Myelin gives white matter its lighter color.",
+        nb: { term: "Gray vs White Matter", def: "Gray: cell bodies + dendrites (processing). White: myelinated axons (connections)." }},
+      { type: "tf",
+        q: "The folds on the surface of the brain are called gyri, and the grooves between them are sulci.",
+        answer: true,
+        explanation: "Gyri (singular: gyrus) = raised folds. Sulci (singular: sulcus) = grooves between folds. Folding dramatically increases brain surface area, packing more cortical tissue into the skull." },
+      { type: "fill",
+        q: "The hollow, fluid-filled cavities in the brain are called ______.",
+        answer: ["ventricles", "ventricle"],
+        explanation: "4 interconnected ventricles, filled with cerebrospinal fluid (CSF). CSF cushions the brain, removes waste, and circulates some hormones.",
+        nb: { term: "Ventricles", def: "Hollow cavities in the brain filled with cerebrospinal fluid (CSF)." }},
+      { type: "mc",
+        q: "Which division of the nervous system includes the brain and spinal cord?",
+        options: [
+          "Peripheral nervous system (PNS)",
+          "Central nervous system (CNS)",
+          "Autonomic nervous system",
+          "Somatic nervous system"
+        ],
+        answer: 1,
+        explanation: "CNS = brain + spinal cord. PNS = all nerves outside the CNS. The PNS subdivides into Afferent (sensory, going TO CNS) and Efferent (motor, going FROM CNS — somatic + autonomic).",
+        nb: { term: "CNS vs PNS", def: "CNS = brain + spinal cord. PNS = all peripheral nerves and ganglia." }},
+      { type: "mc",
+        q: "Compared to the CNS, the PNS has:",
+        options: [
+          "More cell types (more diverse glial cells)",
+          "Fewer cell types (mainly Schwann + satellite cells)",
+          "Identical cell composition",
+          "Only motor neurons"
+        ],
+        answer: 1,
+        explanation: "CNS has greater glial diversity: astrocytes, oligodendrocytes, microglia, ependymal cells. PNS has primarily Schwann cells (myelinating) and satellite cells (supporting somas in ganglia). Less diversity in PNS.",
+        nb: { term: "PNS vs CNS cell diversity", def: "CNS: many glial types. PNS: mainly Schwann + satellite cells." }},
+      { type: "tf",
+        q: "Cephalization is the presence of a head with sensory organs and a brain or ganglia at the anterior end of the organism.",
+        answer: true,
+        explanation: "Cephalization = concentration of sensory and processing structures at the front (head) of an animal. Vertebrates are highly cephalized. Sponges and Placozoans lack cephalization (and lack neurons entirely)." },
+      { type: "fill",
+        q: "The PNS subdivision that controls VOLUNTARY skeletal muscle is the ______ system.",
+        answer: ["motor", "somatic", "somatic motor"],
+        explanation: "PNS efferent components: MOTOR/SOMATIC SYSTEM (voluntary, skeletal muscles, external response) and AUTONOMIC NERVOUS SYSTEM (involuntary, smooth/cardiac muscle and glands, internal stimuli).",
+        nb: { term: "PNS efferent divisions", def: "Motor/Somatic (voluntary, skeletal muscles), Autonomic (involuntary, smooth/cardiac/glands)." }},
+      { type: "mc",
+        q: "The cerebellum is primarily involved in:",
+        options: [
+          "Vision processing",
+          "Coordination of movement and balance",
+          "Memory storage",
+          "Emotional regulation"
+        ],
+        answer: 1,
+        explanation: "Cerebellum = at the back of the brain, part of the hindbrain. Coordinates movement, balance, and motor learning. Damage causes ataxia (uncoordinated movements). The cerebellum looks like a 'little brain' (which is what cerebellum literally means)." },
+      { type: "mc",
+        q: "Which lobe of the cerebral cortex contains the visual cortex?",
+        options: [
+          "Frontal lobe",
+          "Parietal lobe",
+          "Temporal lobe",
+          "Occipital lobe"
+        ],
+        answer: 3,
+        explanation: "Occipital lobe (back of brain) = visual cortex. Frontal = motor cortex + prefrontal (planning). Parietal = somatosensory (touch). Temporal = auditory cortex. Broca's area (frontal): forming speech. Wernicke's area (temporal): comprehending language.",
+        nb: { term: "Lobes & cortices", def: "Frontal: motor, prefrontal. Parietal: somatosensory. Temporal: auditory. Occipital: visual." }},
+      { type: "tf",
+        q: "Cerebrospinal fluid (CSF) nourishes the CNS, carries some hormones, and removes waste.",
+        answer: true,
+        explanation: "CSF is produced in the ventricles, surrounds the brain and spinal cord, and circulates through the central canal of the cord. Functions: cushioning, nutrient delivery, waste removal, hormone transport." },
+      { type: "fill",
+        q: "Sensory neurons that transmit signals INTO the CNS are called ______ neurons.",
+        answer: ["afferent"],
+        explanation: "AFFERENT (think 'arrive') = TO the CNS (sensory). EFFERENT (think 'exit') = FROM the CNS (motor). Mnemonic: A for Arrive, E for Exit.",
+        nb: { term: "Afferent vs Efferent", def: "Afferent: sensory, INTO CNS. Efferent: motor, OUT OF CNS." }},
+      { type: "mc",
+        q: "Which structure is part of the FOREBRAIN, not the hindbrain?",
+        options: [
+          "Pons",
+          "Medulla oblongata",
+          "Cerebellum",
+          "Cerebrum (cerebral cortex)"
+        ],
+        answer: 3,
+        explanation: "Brain divisions: FOREBRAIN (cerebrum, thalamus, hypothalamus, pituitary). MIDBRAIN (smaller in mammals, larger in fish/amphibians). HINDBRAIN (cerebellum, pons, medulla oblongata). The cerebrum is the largest part of the human brain — the wrinkled forebrain you see in most diagrams.",
+        nb: { term: "Brain divisions", def: "Forebrain: cerebrum, thalamus, hypothalamus. Midbrain. Hindbrain: cerebellum, pons, medulla." }},
+      { type: "scenario",
+        scenario: "A patient suffers damage to a region of the brain. Following the injury, they can comprehend speech but have great difficulty PRODUCING fluent speech.",
+        q: "Which region was likely damaged?",
+        options: [
+          "Wernicke's area (temporal lobe)",
+          "Broca's area (frontal lobe)",
+          "Occipital cortex",
+          "Cerebellum"
+        ],
+        answer: 1,
+        explanation: "Broca's area: forming speech (production). Damage = Broca's aphasia (can understand, struggle to speak). Wernicke's area: comprehending speech. Damage = Wernicke's aphasia (can speak fluently but it doesn't make sense).",
+        nb: { term: "Broca vs Wernicke", def: "Broca (frontal): produces speech. Wernicke (temporal): comprehends speech." }},
+      { type: "tf",
+        q: "The autonomic nervous system has both sympathetic and parasympathetic divisions.",
+        answer: true,
+        explanation: "Sympathetic: 'fight or flight' (arousal, energy mobilization). Parasympathetic: 'rest and digest' (calming, resource recovery). Plus the enteric nervous system (gut). All part of the autonomic nervous system." },
+      { type: "fill",
+        q: "Bundles of neurons in the PNS are called ______; clusters of cell bodies in the PNS are called ganglia.",
+        answer: ["nerves", "nerve"],
+        explanation: "In PNS: NERVES = bundles of axons. GANGLIA = cell body clusters. In CNS: TRACTS = bundles of axons. NUCLEI = cell body clusters. Same idea, different names." },
+      { type: "mc",
+        q: "Which animals lack neurons but still possess acetylcholine?",
+        options: [
+          "Mammals",
+          "Sponges and Placozoans",
+          "Insects",
+          "Fish"
+        ],
+        answer: 1,
+        explanation: "Sponges (Phylum Porifera) and Placozoans lack neurons but still produce acetylcholine. Cool note from class — suggests ACh predates nervous systems evolutionarily." },
+      { type: "mc",
+        q: "The cerebral cortex is mostly made of ______ matter, while the deeper white matter handles connections.",
+        options: [
+          "Gray",
+          "White",
+          "Red",
+          "Cerebrospinal"
+        ],
+        answer: 0,
+        explanation: "The cerebral cortex (outer surface of cerebrum) is gray matter — neuron cell bodies and dendrites doing the heavy processing. White matter (myelinated axons) lies underneath, connecting different cortical regions and connecting cortex to deeper structures." },
+      { type: "tf",
+        q: "Vertebrates exhibit cephalization and possess both a CNS and a PNS.",
+        answer: true,
+        explanation: "Vertebrates: highly cephalized, with a complex regionalized CNS (brain + spinal cord) and a PNS (cranial and spinal nerves + sensory ganglia)." },
+      { type: "fill",
+        q: "Sensory and motor information is integrated and processed in the ______ ______ ______ (3-word division).",
+        answer: ["central nervous system", "cns"],
+        explanation: "CNS = central nervous system (brain + spinal cord) — the integration center. PNS feeds it info via afferent neurons; PNS sends commands out via efferent neurons." }
+    ]
+  },
+
+  // ============ LEVEL 9: SENSORY SYSTEMS (Ch 50) ============
+  {
+    id: 9,
+    name: "Sensory Systems",
+    short: "Sensory Systems",
+    pool: [
+      { type: "mc",
+        q: "What is the difference between sensation and perception?",
+        options: [
+          "There is no difference",
+          "Sensation = action potentials sent to the brain; Perception = brain's interpretation",
+          "Sensation = brain processing; Perception = what receptors detect",
+          "Sensation only happens in vision; perception only in hearing"
+        ],
+        answer: 1,
+        explanation: "SENSATION = APs are generated by sensory neurons and sent to the integration center (brain). PERCEPTION = APs arrive in the brain and interneurons evaluate them via summation. The same AP can be perceived very differently depending on where in the brain it arrives.",
+        nb: { term: "Sensation vs Perception", def: "Sensation: APs from receptors to CNS. Perception: brain's interpretation via summation." }},
+      { type: "mc",
+        q: "Hair cells in the cochlea are which kind of sensory receptor?",
+        options: [
+          "Chemoreceptors",
+          "Mechanoreceptors",
+          "Thermoreceptors",
+          "Electromagnetic receptors"
+        ],
+        answer: 1,
+        explanation: "Hair cells in the cochlea (hearing) and vestibular system (balance) are MECHANORECEPTORS — they have mechanically-gated ion channels that open when stereocilia bend in response to physical movement (sound waves or fluid movement).",
+        nb: { term: "Mechanoreceptors", def: "Detect physical force/movement. Hair cells in ear (sound + balance), touch receptors in skin." }},
+      { type: "tf",
+        q: "The frequency of a sound wave is perceived as PITCH, while amplitude is perceived as VOLUME.",
+        answer: true,
+        explanation: "Higher frequency = higher pitch. Larger amplitude = louder volume. Different regions of the cochlea's basilar membrane respond to different frequencies (apex = low pitch, base = high pitch)." },
+      { type: "fill",
+        q: "Receptors that detect tissue damage and trigger pain signals are called ______.",
+        answer: ["nociceptors", "nociceptor", "pain receptors"],
+        explanation: "Nociceptors detect potentially damaging stimuli — extreme pressure, heat, cold, chemicals. They're widely distributed and why a paper cut feels so much sharper than its size suggests.",
+        nb: { term: "Nociceptors", def: "Pain receptors that detect damaging pressure, temperature, or chemicals." }},
+      { type: "scenario",
+        scenario: "A motor neuron stimulates a muscle fiber. Acetylcholine is released at the neuromuscular junction and binds to receptors on the muscle membrane.",
+        q: "What happens next at the muscle?",
+        options: [
+          "The muscle membrane hyperpolarizes",
+          "Calcium is pumped out of the muscle cell",
+          "The muscle membrane depolarizes; depolarization travels down T-tubules and triggers Ca²⁺ release from the SR",
+          "Acetylcholine inhibits the muscle"
+        ],
+        answer: 2,
+        explanation: "ACh binds to muscle receptors → membrane depolarizes → depolarization spreads down T-tubules (infoldings of plasma membrane) → triggers Ca²⁺ release from sarcoplasmic reticulum → Ca²⁺ binds troponin → tropomyosin shifts → exposes myosin binding sites on actin → muscle contracts.",
+        nb: { term: "Neuromuscular sequence", def: "ACh → depolarization → T-tubules → Ca²⁺ release → troponin/tropomyosin shift → actin/myosin → contraction." }},
+      { type: "mc",
+        q: "Which is the correct order of structures sound passes through in the human ear?",
+        options: [
+          "Cochlea → tympanic membrane → ossicles → oval window",
+          "Tympanic membrane → ossicles (malleus/incus/stapes) → oval window → cochlea",
+          "Oval window → tympanic membrane → cochlea → ossicles",
+          "Cochlea → oval window → ossicles → tympanic membrane"
+        ],
+        answer: 1,
+        explanation: "Outer ear: pinna → auditory canal → tympanic membrane. Middle ear: malleus → incus → stapes (the 3 ossicles, from Latin: hammer, anvil, stirrup) → oval window. Inner ear: cochlea (where hair cells transduce sound into APs).",
+        nb: { term: "Ear pathway", def: "Tympanic membrane → malleus, incus, stapes → oval window → cochlea (hair cells)." }},
+      { type: "tf",
+        q: "The basilar membrane in the cochlea responds uniformly to all frequencies.",
+        answer: false,
+        explanation: "The basilar membrane is UNEVEN in thickness/stiffness along its length. The BASE responds to high frequencies; the APEX responds to low frequencies. This 'tonotopic' arrangement is how we discriminate pitch." },
+      { type: "fill",
+        q: "Olfactory (smell) receptor cells line the nasal cavity and bind odorants using ______-protein coupled receptors.",
+        answer: ["g", "g protein"],
+        explanation: "Odorants bind to specific G-Protein Coupled Receptors (GPCRs) on olfactory receptor cells. This triggers signal transduction → cAMP → ion channels open → depolarization → AP → sent to olfactory bulb of brain.",
+        nb: { term: "Olfaction", def: "Odorants bind GPCRs → cAMP → ion channels open → depolarization → AP to olfactory bulb." }},
+      { type: "mc",
+        q: "Which is a NON-NEURONAL sensory receptor?",
+        options: [
+          "An olfactory receptor cell (which is itself a neuron)",
+          "A hair cell in the cochlea (which releases neurotransmitter onto an afferent neuron)",
+          "A nociceptor in the skin (which is itself a neuron)",
+          "All sensory receptors are neurons"
+        ],
+        answer: 1,
+        explanation: "Two types of sensory receptors: NEURONAL (the receptor IS itself an afferent neuron, like olfactory cells, nociceptors). NON-NEURONAL (the receptor is a separate cell that releases neurotransmitter onto an afferent neuron — like hair cells in the cochlea).",
+        nb: { term: "Neuronal vs Non-neuronal receptors", def: "Neuronal: receptor IS the neuron. Non-neuronal: receptor releases NT onto a separate afferent neuron." }},
+      { type: "tf",
+        q: "All sensory receptors transduce a stimulus into a change in MEMBRANE POTENTIAL, regardless of the stimulus type.",
+        answer: true,
+        explanation: "Whether it's light, sound, heat, pressure, or chemicals — all sensory receptors convert the stimulus into electrical changes in their membrane (a receptor potential), which (directly or indirectly) leads to APs sent to the CNS." },
+      { type: "fill",
+        q: "The functional unit of muscle contraction is the ______.",
+        answer: ["sarcomere"],
+        explanation: "Sarcomere = the basic contractile unit. Made of THICK filaments (myosin) and THIN filaments (actin). They slide past each other (Sliding Filament Model), shortening the sarcomere and causing the whole muscle fiber to contract.",
+        nb: { term: "Sarcomere", def: "Functional contractile unit of muscle. Thick (myosin) and thin (actin) filaments slide past each other." }},
+      { type: "mc",
+        q: "What role does Ca²⁺ play in muscle contraction?",
+        options: [
+          "It directly powers myosin movement (replacing ATP)",
+          "It binds troponin, causing tropomyosin to shift and expose myosin-binding sites on actin",
+          "It blocks the actin sites permanently",
+          "It causes the muscle to relax by signaling the SR"
+        ],
+        answer: 1,
+        explanation: "At rest, tropomyosin (with troponin) blocks the myosin-binding sites on actin. Ca²⁺ binds troponin → conformational change → tropomyosin shifts → myosin can now bind actin → contraction happens. When Ca²⁺ levels drop, the block returns and muscle relaxes.",
+        nb: { term: "Ca²⁺ in muscle contraction", def: "Ca²⁺ binds troponin → tropomyosin shifts → myosin binds actin → contraction." }},
+      { type: "mc",
+        q: "Skeletal muscles work in ANTAGONISTIC pairs because:",
+        options: [
+          "They both contract at the same time",
+          "They oppose each other — one flexes a joint, the other extends it",
+          "They produce different neurotransmitters",
+          "Only one is voluntary"
+        ],
+        answer: 1,
+        explanation: "Muscles can only PULL (contract), not push. So you need pairs that pull in opposite directions. Classic example: biceps flexes the elbow; triceps extends it. When biceps contracts, triceps relaxes, and vice versa.",
+        nb: { term: "Antagonistic muscle pairs", def: "Pairs that pull in opposite directions (e.g., biceps/triceps). One contracts while the other relaxes." }},
+      { type: "scenario",
+        scenario: "A person describes a perfume by saying 'it smells like roses.' But what's actually being processed in their brain are simply action potentials.",
+        q: "How does the brain know it smells like roses (and not, say, hears like roses)?",
+        options: [
+          "The APs from olfactory receptors are different from auditory APs",
+          "Olfactory APs travel via specific pathways to specific regions (olfactory bulb), so the brain interprets where APs ARRIVE",
+          "Roses produce a unique neurotransmitter",
+          "The brain is psychic"
+        ],
+        answer: 1,
+        explanation: "All APs are basically identical. What makes a smell different from a sound is WHERE the APs arrive in the brain. Olfactory APs go to the olfactory bulb; auditory APs go to the auditory cortex. The brain interprets based on the destination, not the AP itself." },
+      { type: "tf",
+        q: "Sensory adaptation is the tendency of sensory neurons to become LESS sensitive when they are stimulated repeatedly.",
+        answer: true,
+        explanation: "Sensory adaptation: why you stop noticing your clothes against your skin, or how a bad smell fades after a few minutes. Repeated stimulus = less response. Useful — lets us focus on CHANGES rather than constant background." },
+      { type: "fill",
+        q: "Receptors that detect heat or cold are called ______.",
+        answer: ["thermoreceptors", "thermoreceptor"],
+        explanation: "5 types of sensory receptors: MECHANO (pressure, sound), CHEMO (taste, smell), ELECTROMAGNETIC (light), THERMO (heat/cold), NOCI (pain). The hypothalamus has internal thermoreceptors monitoring core body temp.",
+        nb: { term: "5 sensory receptor types", def: "Mechano, Chemo, Electromagnetic, Thermo, Nociceptors." }},
+      { type: "mc",
+        q: "What are T-tubules and why are they important?",
+        options: [
+          "Bones in the inner ear that amplify sound",
+          "Infoldings of the muscle plasma membrane that quickly propagate depolarization throughout the muscle fiber",
+          "Tendons connecting muscles to bones",
+          "Channels in the brain ventricles"
+        ],
+        answer: 1,
+        explanation: "T-tubules are infoldings of the muscle plasma membrane that carry depolarization deep into the muscle fiber, ensuring the entire fiber contracts simultaneously. They trigger Ca²⁺ release from the sarcoplasmic reticulum.",
+        nb: { term: "T-tubules", def: "Infoldings of muscle plasma membrane that carry depolarization to the SR for fast, synchronized contraction." }},
+      { type: "tf",
+        q: "AMPLIFICATION of a sensory signal can convert a tiny stimulus (like a single photon) into a big response via signal transduction.",
+        answer: true,
+        explanation: "Example from class: 1 photon's energy can be amplified ×100,000 by signal transduction enzymes. Sound vibrations are amplified ×20 by the inner ear bones (ossicles). Amplification is critical for detecting weak stimuli." },
+      { type: "mc",
+        q: "Variation in muscle contraction strength is achieved by:",
+        options: [
+          "Making each AP larger",
+          "Altering the number of muscle fibers that contract AND/OR changing the rate at which fibers are stimulated",
+          "Adding more sarcomeres in real time",
+          "Increasing the size of motor neurons"
+        ],
+        answer: 1,
+        explanation: "Two ways to vary contraction strength: (1) RECRUIT more motor units (more fibers contracting at once = stronger contraction). (2) Change FREQUENCY of stimulation (rapid stimulation summates → stronger sustained contraction). Same logic as sensory neurons coding intensity by frequency." }
+    ]
+  },
+
+  // ============ LEVEL 10: CIRCULATION & BLOOD (Ch 42) ============
+  {
+    id: 10,
+    name: "Circulation & Blood",
+    short: "Circulation",
+    pool: [
+      { type: "mc",
+        q: "Which best describes the difference between an OPEN and CLOSED circulatory system?",
+        options: [
+          "Open: blood stays in vessels. Closed: blood bathes the organs directly",
+          "Open: hemolymph is pumped through sinuses bathing organs directly. Closed: blood stays in vessels",
+          "Open systems are found only in vertebrates",
+          "Closed systems lack a heart"
+        ],
+        answer: 1,
+        explanation: "OPEN system (insects, most molluscs): hemolymph is pumped into sinuses and bathes organs directly. CLOSED system (all vertebrates, some invertebrates): blood stays inside vessels; substances exchange across capillary walls. Closed allows higher pressure and more efficient transport — needed for large, active animals.",
+        nb: { term: "Open vs Closed circulation", def: "Open: hemolymph bathes organs in sinuses. Closed: blood stays in vessels (all vertebrates). Closed = higher pressure, more efficient." }},
+      { type: "mc",
+        q: "What is the fundamental difference between SINGLE and DOUBLE circulation?",
+        options: [
+          "Single uses one heart chamber; double uses two",
+          "In single circulation, blood passes through the heart once per circuit; in double circulation, blood passes through the heart twice",
+          "Single circulation has no capillaries",
+          "Double circulation only exists in birds"
+        ],
+        answer: 1,
+        explanation: "SINGLE circulation (fish): heart → gills → body → heart. Blood passes through heart ONCE per complete circuit. DOUBLE circulation (amphibians, reptiles, birds, mammals): blood passes through heart TWICE — once after returning from body (sent to lungs), once after returning from lungs (sent to body).",
+        nb: { term: "Single vs Double circulation", def: "Single (fish): blood through heart once per circuit. Double (amphibians+): blood through heart twice — pulmonary + systemic circuits." }},
+      { type: "tf",
+        q: "All vertebrates have a closed circulatory system.",
+        answer: true,
+        explanation: "All vertebrates use closed circulation. Closed systems operate under high hydrostatic pressure required for large bodies and allow efficient transport for highly active animals — both reasons it's universal in vertebrates." },
+      { type: "fill",
+        q: "Blood vessels that carry blood AWAY from the heart are called ______.",
+        answer: ["arteries", "artery"],
+        explanation: "ARTERIES carry blood AWAY from the heart (thick-walled, high pressure). VEINS carry blood TOWARD the heart (thinner walls, lower pressure, have valves). CAPILLARIES connect them — site of exchange.",
+        nb: { term: "Arteries vs Veins vs Capillaries", def: "Arteries: away from heart, thick-walled, high pressure. Veins: toward heart, thinner, valves. Capillaries: thin-walled exchange sites." }},
+      { type: "mc",
+        q: "Which is the SYSTOLE phase of the cardiac cycle?",
+        options: [
+          "The relaxation/filling phase",
+          "The contraction/pumping phase",
+          "The phase when blood enters the atria",
+          "A pause between heartbeats"
+        ],
+        answer: 1,
+        explanation: "SYSTOLE = contraction (pumping). DIASTOLE = relaxation (filling). The cardiac cycle has 3 steps: (1) atrial+ventricular diastole (everything relaxes, blood flows in), (2) atrial systole + ventricular diastole (atria contract, push remaining blood into ventricles), (3) ventricular systole + atrial diastole (ventricles contract, push blood out to arteries).",
+        nb: { term: "Systole vs Diastole", def: "Systole: contraction (pumping). Diastole: relaxation (filling)." }},
+      { type: "mc",
+        q: "Why is double circulation in mammals more efficient than single circulation in fish?",
+        options: [
+          "Mammals have larger hearts",
+          "Double circulation maintains higher blood pressure to the body because blood is re-pressurized by the heart after going through the lungs",
+          "Single circulation can't carry oxygen",
+          "Mammals don't need as much oxygen"
+        ],
+        answer: 1,
+        explanation: "In single circulation, blood loses pressure passing through gill capillaries, then has to travel the whole body at low pressure. In double circulation, blood is re-pressurized by the heart between the pulmonary circuit (lungs) and the systemic circuit (body) — supports higher metabolic rates.",
+        nb: { term: "Why double circulation wins", def: "Heart re-pressurizes blood between pulmonary and systemic circuits — supports higher metabolic rate." }},
+      { type: "tf",
+        q: "Amphibians have 2 atria and 1 ventricle, leading to SOME mixing of oxygen-rich and oxygen-poor blood.",
+        answer: true,
+        explanation: "Amphibian heart: 2 atria (one receives systemic blood, one receives pulmocutaneous blood) but only 1 ventricle. The single ventricle means some mixing of O₂-rich and O₂-poor blood — this places a limit on metabolic rate. Mammals (and birds) solved this with 2 ventricles." },
+      { type: "fill",
+        q: "Tiny blood vessels with walls only one cell layer thick, where gas/nutrient/waste exchange happens, are called ______.",
+        answer: ["capillaries", "capillary"],
+        explanation: "Capillaries are the smallest blood vessels — walls are just endothelium + thin connective tissue. Thin walls let oxygen, CO₂, nutrients, and wastes diffuse efficiently between blood and tissues. This is the whole POINT of a circulatory system." },
+      { type: "mc",
+        q: "What is the function of HEART VALVES?",
+        options: [
+          "To make heart sounds",
+          "To prevent retrograde (backward) flow of blood",
+          "To pump blood",
+          "To exchange gases"
+        ],
+        answer: 1,
+        explanation: "Valves prevent backflow. SEMILUNAR valves: at exits of ventricles (prevent blood from flowing back into ventricles after it's been pumped out). ATRIOVENTRICULAR valves: between atria and ventricles (prevent backflow into atria when ventricles contract).",
+        nb: { term: "Heart valves", def: "Semilunar (ventricle exits) and Atrioventricular (between atria and ventricles) — both prevent retrograde flow." }},
+      { type: "mc",
+        q: "Why are veins thinner-walled than arteries?",
+        options: [
+          "Veins don't carry blood",
+          "Veins hold blood under much lower pressure than arteries",
+          "Veins are not living tissue",
+          "Veins are made of cartilage"
+        ],
+        answer: 1,
+        explanation: "Arteries handle high-pressure blood directly out of the heart, so they need thick walls with lots of smooth muscle and connective tissue. Veins handle low-pressure return blood — thinner walls, less muscle. Veins also have valves (arteries don't) and rely on skeletal muscle contraction to help push blood back to the heart.",
+        nb: { term: "Vein structure", def: "Thinner walls than arteries (low pressure), have valves, and use skeletal muscle contractions as secondary pumps." }},
+      { type: "tf",
+        q: "Blood is classified as a CONNECTIVE tissue because it consists of cells suspended in an extracellular matrix (plasma).",
+        answer: true,
+        explanation: "Blood = connective tissue. Its 'matrix' is the liquid plasma; its 'cells' are the formed elements (RBCs, WBCs, platelets). Tissues from class: epithelial, connective (includes blood), muscle, nervous." },
+      { type: "fill",
+        q: "Red blood cells, which transport gases (mainly O₂), are formally called ______.",
+        answer: ["erythrocytes", "erythrocyte"],
+        explanation: "Erythrocytes (RBCs) carry oxygen using hemoglobin. They lack a nucleus in mammals, which leaves more room for hemoglobin. Erythro = red, cyte = cell.",
+        nb: { term: "Blood cells", def: "Erythrocytes (RBCs): carry gases. Leukocytes (WBCs): fight infection. Platelets: clotting." }},
+      { type: "mc",
+        q: "Which blood component is primarily responsible for fighting infection?",
+        options: [
+          "Erythrocytes (red blood cells)",
+          "Leukocytes (white blood cells)",
+          "Platelets",
+          "Plasma proteins"
+        ],
+        answer: 1,
+        explanation: "Leukocytes (WBCs) = immune cells. Erythrocytes carry gases. Platelets are cell fragments that handle clotting (thrombosis). Plasma proteins do various things (osmotic balance, pH buffering, some clotting factors, defense)." },
+      { type: "fill",
+        q: "Cell fragments that initiate blood clotting (thrombosis) are called ______.",
+        answer: ["platelets", "platelet", "thrombocytes"],
+        explanation: "Platelets aren't whole cells — they're fragments pinched off from larger cells in bone marrow. When you cut yourself, they pile up at the wound and trigger the clotting cascade." },
+      { type: "scenario",
+        scenario: "In mammalian double circulation, oxygen-poor blood returns from the body to the right side of the heart. It gets pumped to the lungs to pick up oxygen, returns to the left side of the heart, then is pumped to the rest of the body.",
+        q: "What is the LEFT side of the heart responsible for?",
+        options: [
+          "Pumping oxygen-poor blood to the lungs (pulmonary circuit)",
+          "Pumping oxygen-rich blood to the body (systemic circuit)",
+          "Receiving blood from the body",
+          "Storing blood"
+        ],
+        answer: 1,
+        explanation: "RIGHT side: receives O₂-poor blood from body, pumps it to lungs (pulmonary circuit). LEFT side: receives O₂-rich blood from lungs, pumps it to body (systemic circuit). The left ventricle is the most muscular chamber because it generates the pressure for the entire body.",
+        nb: { term: "Mammalian heart sides", def: "Right side: pulmonary (to lungs). Left side: systemic (to body). Left ventricle is most muscular." }},
+      { type: "mc",
+        q: "What does PLASMA contain that makes up most of its volume?",
+        options: [
+          "Red blood cells",
+          "Water (about 90%)",
+          "Hemoglobin",
+          "Cholesterol"
+        ],
+        answer: 1,
+        explanation: "Plasma is ~90% water. The rest: electrolytes (inorganic salts — help with osmotic balance and buffering pH) and plasma proteins (osmotic balance, pH buffering, clotting factors, defense). Plasma also transports nutrients, wastes, hormones, and dissolved gases.",
+        nb: { term: "Plasma composition", def: "~90% water + electrolytes (osmotic balance, pH buffer) + plasma proteins (clotting, defense, osmotic balance)." }},
+      { type: "tf",
+        q: "Skeletal muscle contractions help push blood back through veins toward the heart.",
+        answer: true,
+        explanation: "Veins operate under low pressure, so they need help. When skeletal muscles contract (during walking, etc.), they squeeze nearby veins. Vein valves prevent backflow, so blood is forced upward toward the heart. This is why standing still too long can cause blood to pool in your legs." },
+      { type: "mc",
+        q: "Some simple animals like cnidarians (jellies) and flatworms have NO circulatory system. How do they get oxygen and nutrients to their cells?",
+        options: [
+          "They have hidden microscopic vessels",
+          "They have a high surface area to volume ratio and rely on diffusion across short distances",
+          "They get nutrients through their skin only",
+          "They have a single-chambered heart"
+        ],
+        answer: 1,
+        explanation: "Cnidarians and flatworms are thin-bodied with high SA:V ratios. Their cells are close enough to water/fluid (and to the gastrovascular cavity in cnidarians) that simple diffusion across short distances is sufficient. No need for a heart or vessels.",
+        nb: { term: "No circulatory system", def: "Some simple animals (cnidarians, flatworms) rely on diffusion via high SA:V — no heart or vessels needed." }},
+      { type: "fill",
+        q: "Step 3 of the cardiac cycle involves ventricular ______ and atrial diastole.",
+        answer: ["systole"],
+        explanation: "3 steps: (1) atrial+ventricular DIASTOLE (everything relaxes, blood flows in), (2) atrial SYSTOLE + ventricular DIASTOLE (atria contract, push remaining blood into ventricles), (3) ventricular SYSTOLE + atrial DIASTOLE (ventricles contract, send blood out)." }
+    ]
+  },
+
+  // ============ LEVEL 11: OSMOREGULATION & EXCRETION (Ch 44) ============
+  {
+    id: 11,
+    name: "Osmoregulation & Excretion",
+    short: "Osmoregulation",
+    pool: [
+      { type: "mc",
+        q: "What is the key difference between osmoCONFORMERS and osmoREGULATORS?",
+        options: [
+          "Conformers spend energy to maintain salt balance; regulators don't",
+          "Conformers are isoosmotic with surroundings (no energy needed); regulators expend energy to maintain a different internal solute concentration",
+          "Conformers only live in freshwater",
+          "Regulators are always larger than conformers"
+        ],
+        answer: 1,
+        explanation: "OSMOCONFORMERS match the solute concentration of their environment — no energy needed. ALL osmoconformers are MARINE (the ocean is stable enough to make this work). OSMOREGULATORS maintain a different internal concentration than their environment (hyperosmotic or hypoosmotic), which costs ATP.",
+        nb: { term: "Osmoconformers vs Osmoregulators", def: "Conformers: isoosmotic w/ environment (no ATP). All marine. Regulators: maintain different internal concentration (costs ATP)." }},
+      { type: "tf",
+        q: "Water moves by osmosis from a HYPOosmotic solution (low solute) to a HYPERosmotic solution (high solute).",
+        answer: true,
+        explanation: "Water moves toward higher solute concentrations (water 'follows the salt'). Hypoosmotic = lower solute concentration. Hyperosmotic = higher solute concentration. The selectively permeable membrane lets water move but not the solutes." },
+      { type: "fill",
+        q: "The disposal of nitrogen-containing metabolites and other waste products is called ______.",
+        answer: ["excretion"],
+        explanation: "Metabolism (especially of proteins and nucleic acids) produces toxic nitrogenous wastes that must be removed from the body. Different animals handle this differently — ammonia, urea, or uric acid." },
+      { type: "mc",
+        q: "Which nitrogenous waste is the MOST toxic and requires the most water to excrete?",
+        options: [
+          "Ammonia",
+          "Urea",
+          "Uric acid",
+          "All are equally toxic"
+        ],
+        answer: 0,
+        explanation: "AMMONIA: extremely toxic, very water-soluble, needs lots of water to excrete. Most common in AQUATIC animals (especially bony fishes) who have unlimited water available. UREA: less toxic, less water needed (mammals, most amphibians, sharks). URIC ACID: least toxic, almost no water needed (reptiles, birds, insects, land snails) — but most energetically expensive to make.",
+        nb: { term: "3 nitrogenous wastes", def: "Ammonia (aquatic, very toxic, water-hungry). Urea (mammals/amphibians, intermediate). Uric acid (reptiles/birds/insects, least toxic, energy-expensive)." }},
+      { type: "mc",
+        q: "Which animals primarily excrete URIC ACID as their nitrogenous waste?",
+        options: [
+          "Bony fish",
+          "Mammals and most amphibians",
+          "Reptiles (including birds), insects, and land snails",
+          "Cnidarians"
+        ],
+        answer: 2,
+        explanation: "Uric acid is excreted as a paste with almost no water loss — perfect for terrestrial animals that need to conserve water (and for embryos developing in eggs, where waste can't be flushed away). Reptiles, birds, insects, and land snails all use uric acid.",
+        nb: { term: "Uric acid users", def: "Reptiles (including birds), insects, and land snails. Conserves water but expensive to make." }},
+      { type: "scenario",
+        scenario: "A friend is studying the kidney and tells you that during one step, water and small solutes (sugars, amino acids, salts, urea) are forced across capillary membranes by blood pressure into the excretory tubule. Cells and large proteins cannot cross.",
+        q: "Which of the 4 steps of excretion is this?",
+        options: [
+          "Filtration",
+          "Reabsorption",
+          "Secretion",
+          "Excretion"
+        ],
+        answer: 0,
+        explanation: "FILTRATION (Step 1): blood pressure pushes water + small solutes from capillaries into the tubule. Non-selective: cells and proteins stay behind because they're too big. Then REABSORPTION (Step 2) reclaims valuable stuff, SECRETION (Step 3) adds toxins/excess ions back in, and EXCRETION (Step 4) sends the final filtrate (urine) out of the body.",
+        nb: { term: "4 steps of excretion", def: "1. Filtration (blood pressure pushes filtrate in). 2. Reabsorption (reclaim valuables). 3. Secretion (add toxins/excess ions). 4. Excretion (out of body)." }},
+      { type: "mc",
+        q: "Why does the excretory process require LOTS of ATP, even though water moves passively by osmosis?",
+        options: [
+          "Reabsorption and secretion move solutes against their concentration gradients, which requires active transport",
+          "Filtration is an active process",
+          "The kidneys need ATP to filter blood",
+          "Ammonia detoxification consumes ATP"
+        ],
+        answer: 0,
+        explanation: "Filtration uses blood pressure (no ATP at the kidney). But reabsorption pulls valuable stuff BACK across membranes (often against gradient = active transport = ATP). Secretion pushes toxins/ions OUT against gradients (also active transport). The whole reason kidneys consume so much ATP is the active movement of solutes." },
+      { type: "fill",
+        q: "The functional unit of the kidney is the ______.",
+        answer: ["nephron"],
+        explanation: "Each kidney has about a million nephrons. Each nephron is a long tubule that processes a small amount of filtrate, ultimately producing urine. The nephrons are clustered into renal pyramids within the kidney.",
+        nb: { term: "Nephron", def: "Functional unit of the kidney. Each kidney has ~1 million nephrons clustered into renal pyramids." }},
+      { type: "mc",
+        q: "In the mammalian kidney, where does the initial filtrate FIRST collect?",
+        options: [
+          "The Loop of Henle",
+          "The distal tubule",
+          "Bowman's capsule (which surrounds the glomerulus)",
+          "The collecting duct"
+        ],
+        answer: 2,
+        explanation: "Bowman's capsule = cup-shaped structure surrounding the glomerulus (a ball of capillaries). Blood pressure pushes filtrate from glomerular capillaries into Bowman's capsule. From there, filtrate flows through: proximal tubule → Loop of Henle → distal tubule → collecting duct.",
+        nb: { term: "Nephron pathway", def: "Glomerulus/Bowman's capsule → Proximal tubule → Loop of Henle → Distal tubule → Collecting duct." }},
+      { type: "fill",
+        q: "The bundle of capillaries inside Bowman's capsule where filtration happens is called the ______.",
+        answer: ["glomerulus"],
+        explanation: "Glomerulus = tight ball of capillaries with extra-high blood pressure. That pressure forces water and small solutes out of the blood and into Bowman's capsule. The filtrate has a composition similar to plasma (just without cells and big proteins)." },
+      { type: "mc",
+        q: "In the descending limb of the Loop of Henle, what moves out of the tubule?",
+        options: [
+          "Salt (NaCl)",
+          "Water (via aquaporins)",
+          "Glucose",
+          "Urea"
+        ],
+        answer: 1,
+        explanation: "DESCENDING limb: water exits (via aquaporins) but salts stay in (no salt channels). ASCENDING limb: salts exit (active transport in thick segment, passive in thin) but water stays in (no aquaporins). This counter-current setup builds up the concentration gradient that lets the kidney make concentrated urine.",
+        nb: { term: "Loop of Henle", def: "Descending: water out, salt stays (aquaporins, no salt channels). Ascending: salt out, water stays. Builds concentration gradient." }},
+      { type: "tf",
+        q: "The proximal tubule is where most reabsorption of ions, water, and nutrients (like glucose and amino acids) occurs.",
+        answer: true,
+        explanation: "The proximal tubule does the bulk of the reabsorption work — it reclaims most of the glucose, amino acids, vitamins, useful ions, and a lot of the water from the filtrate. Both secretion and reabsorption happen here, dramatically changing filtrate composition." },
+      { type: "mc",
+        q: "What is the primary function of the DISTAL tubule?",
+        options: [
+          "Filtering blood",
+          "Regulating NaCl and K⁺ concentration of body fluids",
+          "Reabsorbing glucose",
+          "Producing urine from scratch"
+        ],
+        answer: 1,
+        explanation: "Distal tubule: fine-tunes the salt balance. Reabsorbs or secretes NaCl, K⁺, H⁺, HCO₃⁻ to regulate body fluid composition and pH. Hormones (like aldosterone) act here to adjust electrolyte balance." },
+      { type: "fill",
+        q: "The two regions of the kidney are the outer renal ______ and the inner renal medulla.",
+        answer: ["cortex"],
+        explanation: "Renal CORTEX (outer) + renal MEDULLA (inner). The medulla contains the renal pyramids (clusters of nephrons). Loops of Henle dip down into the medulla, creating the salt-concentration gradient that lets the kidney produce concentrated urine.",
+        nb: { term: "Kidney regions", def: "Renal Cortex (outer) + Renal Medulla (inner, contains renal pyramids and most of the Loop of Henle)." }},
+      { type: "scenario",
+        scenario: "A marine bird drinks seawater because it's surrounded by it. Seawater is much saltier than the bird's body fluids.",
+        q: "How does the bird get rid of all that excess salt without dehydrating itself?",
+        options: [
+          "It can't, and dies of dehydration",
+          "Through specialized nasal salt glands that actively secrete concentrated salt solution",
+          "Through its kidneys only",
+          "By sweating"
+        ],
+        answer: 1,
+        explanation: "Marine birds (and reptiles) have nasal SALT GLANDS. Specialized secretory cells use active transport to move salt ions from blood to cells to the lumen of secretory tubules. The salty fluid drips out the nostrils — letting the bird drink seawater and dump excess salt without losing precious water.",
+        nb: { term: "Salt glands", def: "Nasal salt glands in marine birds — actively secrete excess salt, letting them drink seawater." }},
+      { type: "mc",
+        q: "What is the COMPOSITION of the initial filtrate that enters Bowman's capsule?",
+        options: [
+          "Similar to urine — concentrated and ready to excrete",
+          "Similar to plasma — water + small solutes (salts, ions, urea, glucose, amino acids), without cells or large proteins",
+          "Pure water",
+          "Just nitrogenous wastes"
+        ],
+        answer: 1,
+        explanation: "Filtration is NON-SELECTIVE — anything small enough crosses, anything too big stays in the blood. So initial filtrate ≈ plasma composition: water + small solutes + nutrients + wastes + ions. The valuable stuff gets reabsorbed later; the waste stays in the tubule and becomes urine.",
+        nb: { term: "Initial filtrate", def: "Similar in composition to plasma — non-selective filtration leaves big stuff (cells, proteins) in blood." }},
+      { type: "tf",
+        q: "Reabsorption requires moving solutes AGAINST a concentration gradient, which is why it needs active transport.",
+        answer: true,
+        explanation: "By the time filtrate reaches the proximal tubule, useful solutes (glucose, amino acids, ions) are concentrated IN the tubule. To get them back into blood, the body has to pump them against their gradient — that's active transport, which costs ATP." },
+      { type: "mc",
+        q: "Once filtrate from multiple nephrons enters the COLLECTING DUCT, what's the final adjustment that happens before urine leaves the kidney?",
+        options: [
+          "More glucose is added to the filtrate",
+          "Additional water reabsorption (along with some salt and urea movement) further concentrates the urine",
+          "All filtrate is sent back to the blood",
+          "The filtrate is sterilized"
+        ],
+        answer: 1,
+        explanation: "Collecting duct: further reabsorbs water, NaCl, and urea (under hormonal control — ADH/vasopressin makes the duct more permeable to water, producing more concentrated urine). This is the final step before the filtrate (now urine) flows to the ureter and out of the body.",
+        nb: { term: "Collecting duct", def: "Final water reabsorption before urine exits — concentrates the urine under ADH control." }},
+      { type: "fill",
+        q: "The waste form of nitrogenous waste used by mammals, most amphibians, and sharks is ______.",
+        answer: ["urea"],
+        explanation: "Urea: middle-ground choice. Less toxic than ammonia, so doesn't need as much water to dilute it. Less expensive than uric acid to make. It does cost ATP to convert ammonia to urea, but the water savings are worth it for animals living on land or in unstable water environments." }
+    ]
+  },
+
+  // ============ LEVEL 12: HORMONES & ENDOCRINE SYSTEM (Ch 45) ============
+  {
+    id: 12,
+    name: "Hormones & Endocrine System",
+    short: "Endocrine",
+    pool: [
+      { type: "mc",
+        q: "What is the KEY difference between hormones and pheromones?",
+        options: [
+          "Hormones are larger molecules than pheromones",
+          "Hormones communicate WITHIN an individual; pheromones communicate BETWEEN individuals",
+          "Pheromones are only used by insects",
+          "There is no difference"
+        ],
+        answer: 1,
+        explanation: "HORMONES: secreted chemicals used for communication WITHIN an individual. PHEROMONES: small volatile molecules released into the environment for communication BETWEEN individuals (e.g., to attract mates, mark territory).",
+        nb: { term: "Hormones vs Pheromones", def: "Hormones: communicate WITHIN one organism. Pheromones: communicate BETWEEN organisms." }},
+      { type: "mc",
+        q: "Compared to the nervous system, the endocrine system:",
+        options: [
+          "Sends faster signals that act on specific targets",
+          "Sends slower, more widespread signals that typically last longer",
+          "Uses electrical signals only",
+          "Doesn't use chemical messengers"
+        ],
+        answer: 1,
+        explanation: "ENDOCRINE: hormones diffuse/travel via bloodstream → broadcast widely, slow, long-lasting. NERVOUS: electrochemical along specific neurons → fast, target-specific, short-lasting. Together they coordinate the body's responses.",
+        nb: { term: "Endocrine vs Nervous", def: "Endocrine: broadcast widely via blood, slow, long-lasting. Nervous: targeted via neurons, fast, short-lasting." }},
+      { type: "fill",
+        q: "The 3 stages of any signal transduction pathway are: Reception, Transduction, and ______.",
+        answer: ["response"],
+        explanation: "RECEPTION (hormone binds receptor, receptor changes shape) → TRANSDUCTION (signal amplified by relay molecules / second messengers) → RESPONSE (proteins made or modified, cell reacts). Same framework you learned in plant hormones." },
+      { type: "mc",
+        q: "How does a WATER-SOLUBLE hormone (like insulin or epinephrine) reach its target cell?",
+        options: [
+          "It diffuses through the plasma membrane and binds a receptor inside the nucleus",
+          "It cannot cross the plasma membrane, so it binds a receptor on the cell surface and triggers signal transduction",
+          "It is broken down before it reaches the target",
+          "It acts only by entering the cell through endocytosis"
+        ],
+        answer: 1,
+        explanation: "Water-soluble hormones (polypeptides like insulin; amines like epinephrine) can't cross the lipid bilayer. They bind to SURFACE receptors and trigger signal transduction inside (often via second messengers). Lipid-soluble hormones (steroids like cortisol, testosterone) DO cross the membrane and bind receptors INSIDE the cell (cytoplasm or nucleus).",
+        nb: { term: "Water-soluble vs lipid-soluble hormones", def: "Water-soluble: surface receptors, signal transduction. Lipid-soluble (steroids): intracellular receptors, often direct gene regulation." }},
+      { type: "tf",
+        q: "Steroid hormones (like cortisol and testosterone) bind to receptors located INSIDE the cell — either in the cytoplasm or the nucleus.",
+        answer: true,
+        explanation: "Steroids are lipid-soluble, so they pass through the plasma membrane. They need transport proteins to stay soluble in the blood. Once inside the target cell, they bind intracellular receptors and often directly regulate gene transcription." },
+      { type: "scenario",
+        scenario: "A student walks into class and realizes she has a pop quiz she didn't study for. Her heart races, blood is shunted to her brain and muscles, her pupils dilate, and her blood glucose rises.",
+        q: "Which hormones from which gland are responsible for this fight-or-flight response?",
+        options: [
+          "Insulin and glucagon from the pancreas",
+          "Epinephrine and norepinephrine from the adrenal gland",
+          "Thyroxine from the thyroid",
+          "Growth hormone from the pituitary"
+        ],
+        answer: 1,
+        explanation: "Fight-or-flight: stress → brain → nerve signal → adrenal gland → epinephrine (adrenaline) + norepinephrine released into bloodstream. Effects: increased blood glucose, shunting of blood to heart/brain/skeletal muscles, increased O₂ delivery, increased metabolic rate.",
+        nb: { term: "Fight-or-Flight", def: "Adrenal gland releases epinephrine + norepinephrine. ↑ blood glucose, ↑ heart rate, blood shunted to brain/muscles, ↑ metabolism." }},
+      { type: "mc",
+        q: "How can ONE hormone (like epinephrine) cause DIFFERENT responses in different tissues?",
+        options: [
+          "It can't — one hormone has only one effect",
+          "Different tissues have different receptors (or different intracellular proteins linked to the same receptor), so the same hormone triggers different responses",
+          "The brain decides what each tissue should do",
+          "The hormone changes its structure for each tissue"
+        ],
+        answer: 1,
+        explanation: "Epinephrine example: liver cells (β receptors → glycogen breakdown → glucose released). Smooth muscle in skeletal muscle vessels (β receptors → vessel DILATES → more blood to muscles). Smooth muscle in intestinal vessels (α receptors → vessel CONSTRICTS → less blood to intestines). Same hormone, different receptors → different (and coordinated) responses.",
+        nb: { term: "One signal, many effects", def: "Different cells have different receptors (or different downstream proteins) → same hormone can produce different responses." }},
+      { type: "fill",
+        q: "The pancreas contains alpha cells that release glucagon, and ______ cells that release insulin.",
+        answer: ["beta"],
+        explanation: "ISLETS OF LANGERHANS in the pancreas: ALPHA cells secrete GLUCAGON (raises blood glucose when low). BETA cells secrete INSULIN (lowers blood glucose when high). These two hormones work antagonistically to keep blood glucose near the set point (~90 mg/100 mL).",
+        nb: { term: "Pancreatic islet cells", def: "Alpha → Glucagon (raises blood glucose). Beta → Insulin (lowers blood glucose). Antagonistic regulators of blood glucose." }},
+      { type: "scenario",
+        scenario: "After eating a meal, a person's blood glucose rises. The pancreas senses this and releases a hormone. The liver responds by taking up glucose and storing it as glycogen. Body cells take up more glucose. Blood glucose returns to normal.",
+        q: "Which hormone is responsible?",
+        options: [
+          "Glucagon",
+          "Insulin",
+          "Epinephrine",
+          "Cortisol"
+        ],
+        answer: 1,
+        explanation: "Rising glucose → BETA cells release INSULIN → cells take up glucose, liver stores it as glycogen → glucose drops back to set point. This is classic NEGATIVE FEEDBACK. When glucose drops too low, the opposite happens: ALPHA cells release GLUCAGON → liver breaks down glycogen → releases glucose to blood." },
+      { type: "mc",
+        q: "Type I diabetes is caused by:",
+        options: [
+          "An autoimmune disorder that destroys beta cells in the pancreas, so no insulin is produced",
+          "Cells becoming resistant to insulin while the pancreas still makes it",
+          "Overproduction of glucagon",
+          "Too much sugar in the diet alone"
+        ],
+        answer: 0,
+        explanation: "TYPE I: autoimmune destruction of beta cells → no insulin → must inject insulin to survive. TYPE II: insulin deficiency + decreased responsiveness to insulin (receptor problem) → often managed with diet, exercise, and medication. Both produce the symptoms: high blood glucose, glucose in urine, frequent urination/thirst (the glucose disrupts kidney solute balance).",
+        nb: { term: "Type I vs Type II diabetes", def: "Type I: autoimmune destruction of beta cells (no insulin). Type II: insulin resistance + deficiency (receptor problem)." }},
+      { type: "tf",
+        q: "TROPIC hormones target other endocrine cells, triggering the release of a second hormone, while NON-TROPIC hormones act directly on a non-endocrine target.",
+        answer: true,
+        explanation: "Non-tropic = direct effect on target. Tropic = indirect, hormone-causes-more-hormones. Example tropic hormones from anterior pituitary: TSH (stimulates thyroid), ACTH (stimulates adrenal cortex), FSH/LH (stimulate gonads). Tropic pathways can get complex with multiple layers." },
+      { type: "fill",
+        q: "Blood calcium levels are raised by parathyroid hormone (PTH) from the parathyroid gland and lowered by ______ from the thyroid.",
+        answer: ["calcitonin"],
+        explanation: "Two opposing hormones keep blood Ca²⁺ at ~10 mg/100 mL. PTH (when Ca²⁺ is low): pulls Ca²⁺ from bones, increases reabsorption in kidneys, increases gut uptake (with vitamin D). CALCITONIN (when Ca²⁺ is high): deposits Ca²⁺ in bones, reduces reabsorption in kidneys.",
+        nb: { term: "Blood Ca²⁺ regulation", def: "PTH (parathyroid): raises blood Ca²⁺. Calcitonin (thyroid): lowers blood Ca²⁺. Antagonistic regulation." }},
+      { type: "mc",
+        q: "PARACRINE signaling differs from endocrine signaling because in paracrine signaling:",
+        options: [
+          "The signal travels through the bloodstream to distant tissues",
+          "The signal only affects nearby cells in the local neighborhood (no bloodstream travel)",
+          "The signal goes back to the cell that produced it",
+          "No receptor is needed"
+        ],
+        answer: 1,
+        explanation: "Types of signaling by secreted molecules: ENDOCRINE (long-distance via blood). PARACRINE (local, to neighbors). AUTOCRINE (back to self). SYNAPTIC (neuron to neuron via synapse). NEUROENDOCRINE (neurosecretory cell releases neurohormones into blood).",
+        nb: { term: "5 signaling types", def: "Endocrine (blood, far). Paracrine (local). Autocrine (self). Synaptic (neuron-neuron). Neuroendocrine (neurohormones via blood)." }},
+      { type: "mc",
+        q: "Which hormone has BOTH tropic AND non-tropic effects, including stimulating bone and tissue growth directly AND stimulating the liver to release IGF-1?",
+        options: [
+          "TSH",
+          "FSH",
+          "Growth Hormone (GH)",
+          "Prolactin"
+        ],
+        answer: 2,
+        explanation: "Growth Hormone (GH) from the anterior pituitary is special: it acts DIRECTLY on bones/tissues (non-tropic) AND stimulates the liver to release IGF-1 (tropic). Hypersecretion in youth → gigantism (Robert Wadlow, 8'11\"). Hypersecretion in adults → acromegaly (André the Giant). Hyposecretion in youth → pituitary dwarfism.",
+        nb: { term: "Growth Hormone (GH)", def: "Both tropic + non-tropic. Youth hypersecretion: gigantism. Adult hypersecretion: acromegaly. Youth hyposecretion: pituitary dwarfism." }},
+      { type: "tf",
+        q: "Insulin and glucagon are an example of NEGATIVE feedback regulation of blood glucose.",
+        answer: true,
+        explanation: "Negative feedback: a change in the variable triggers responses that COUNTERACT the change. High glucose → insulin → glucose drops. Low glucose → glucagon → glucose rises. The set point (~90 mg/100 mL) is maintained by these opposing signals. Same principle as a thermostat regulating temperature." },
+      { type: "mc",
+        q: "In NEUROENDOCRINE signaling, what's the secretory cell?",
+        options: [
+          "A typical endocrine gland cell",
+          "A neurosecretory cell (a neuron that releases neurohormones into the bloodstream)",
+          "A red blood cell",
+          "An immune cell"
+        ],
+        answer: 1,
+        explanation: "Neuroendocrine signaling: a neurosecretory cell (a neuron) secretes neurohormones, which diffuse into the bloodstream and act like ordinary hormones. Initial nerve signal is fast, but the downstream hormonal response can be long. Classic example: hypothalamus → posterior pituitary → ADH and oxytocin released into blood.",
+        nb: { term: "Neuroendocrine signaling", def: "Neurosecretory cells release neurohormones into bloodstream. Fast neural trigger, long-lasting hormonal effect." }},
+      { type: "fill",
+        q: "Hormone signaling that travels through the bloodstream to reach distant target cells is called ______ signaling.",
+        answer: ["endocrine"],
+        explanation: "Endocrine signaling = the 'classic' long-distance hormonal pathway. Endocrine cell → hormone → bloodstream → target cells with the right receptor anywhere in the body. Used for: stimulus response, growth/development regulation, sexual maturation, homeostasis." },
+      { type: "mc",
+        q: "Why don't ALL cells respond to a particular hormone, even though hormones travel through the entire bloodstream?",
+        options: [
+          "Only cells near the gland get exposed",
+          "Only cells with the correct RECEPTOR protein for that hormone can detect and respond to it",
+          "Hormones are broken down quickly",
+          "Hormones travel slowly"
+        ],
+        answer: 1,
+        explanation: "Hormones reach every cell. But only cells with the right RECEPTOR can respond — others ignore it. This is what makes hormonal signaling specific despite the broadcast nature of delivery. Receptors can be on the cell surface (water-soluble hormones) or inside the cell (lipid-soluble)." }
+    ]
+  }
+];
+
+// Build a boss battle pool from all level pools
+function buildBossPool() {
+  const all = [];
+  LEVELS.forEach(lvl => {
+    lvl.pool.forEach(q => all.push({ ...q, _from: lvl.short }));
+  });
+  return all;
+}
+
+// ============================================================
+// GAME STATE
+// ============================================================
+const state = {
+  currentLevel: null,
+  currentQ: 0,
+  hp: 100,
+  xp: 0,
+  streak: 0,
+  hintsLeft: 2,
+  correctCount: 0,
+  totalAnswered: 0,
+  answered: false,
+  notebook: [],
+  levelProgress: {},
+  questionsThisRun: [],
+};
+
+LEVELS.forEach(l => state.levelProgress[l.id] = { best: 0, cleared: false, plays: 0 });
+state.levelProgress['boss'] = { best: 0, cleared: false, plays: 0 };
+
+// Shuffle helper (Fisher-Yates)
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pick 15 questions per level (or 25 for boss). Different shuffle each time.
+function pickQuestions(levelId) {
+  if (levelId === 'boss') {
+    return shuffle(buildBossPool()).slice(0, 30);
+  }
+  const level = LEVELS.find(l => l.id === levelId);
+  return shuffle(level.pool).slice(0, 15);
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+
+function renderHome() {
+  document.getElementById('screen-home').classList.remove('hidden');
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-results').classList.add('hidden');
+
+  const cleared = Object.values(state.levelProgress).filter(p => p.cleared).length;
+  const totalLevels = LEVELS.length + 1;
+
+  let html = `
+    <div class="hero">
+      <div class="hero-eyebrow">Final Exam Prep</div>
+      <div class="hero-title">Level up.<br>Learn it cold.</div>
+      <div class="hero-sub">Nine lecture levels, one cumulative boss battle. Score 80% to unlock the next level. Replay any level for fresh questions.</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">${cleared}/${totalLevels}</div>
+        <div class="stat-label">Cleared</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${state.xp}</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${state.notebook.length}</div>
+        <div class="stat-label">Notes</div>
+      </div>
+    </div>
+
+    <div class="section-title">Lectures</div>
+    <div class="level-list">
+  `;
+
+  LEVELS.forEach((lvl, i) => {
+    const prog = state.levelProgress[lvl.id];
+    const prevCleared = i === 0 || state.levelProgress[LEVELS[i-1].id].cleared;
+    const locked = !prevCleared && !prog.cleared;
+
+    let status = locked ? 'Locked' : (prog.cleared ? '✓ Cleared' : 'Start');
+    let bestText = prog.best > 0 ? `Best: ${prog.best}%` : `${lvl.pool.length} in pool`;
+
+    html += `
+      <button class="level-card ${prog.cleared ? 'cleared' : ''} ${locked ? 'locked' : ''}"
+              ${locked ? 'disabled' : `onclick="startLevel(${lvl.id})"`}>
+        <div class="level-num">${lvl.id}</div>
+        <div class="level-info">
+          <div class="level-name">${lvl.name}</div>
+          <div class="level-meta">15 questions · ${bestText}</div>
+        </div>
+        <div class="level-status">${status}</div>
+      </button>
+    `;
+  });
+
+  const allCleared = LEVELS.every(l => state.levelProgress[l.id].cleared);
+  const bossProg = state.levelProgress['boss'];
+  const bossLocked = !allCleared && !bossProg.cleared;
+  const bossStatus = bossLocked ? 'Clear all 9' : (bossProg.cleared ? '✓ Conquered' : 'Fight');
+  const bossBestText = bossProg.best > 0 ? `Best: ${bossProg.best}%` : '30 mixed questions';
+
+  html += `
+      <button class="level-card boss ${bossProg.cleared ? 'cleared' : ''} ${bossLocked ? 'locked' : ''}"
+              ${bossLocked ? 'disabled' : `onclick="startLevel('boss')"`}>
+        <div class="level-num">★</div>
+        <div class="level-info">
+          <div class="level-name">Cumulative Boss Battle</div>
+          <div class="level-meta">${bossBestText}</div>
+        </div>
+        <div class="level-status">${bossStatus}</div>
+      </button>
+    </div>
+  `;
+
+  document.getElementById('screen-home').innerHTML = html;
+}
+
+function startLevel(levelId) {
+  let levelData;
+  if (levelId === 'boss') {
+    levelData = { id: 'boss', name: 'Cumulative Boss Battle', short: 'Boss Battle', isBoss: true };
+  } else {
+    levelData = LEVELS.find(l => l.id === levelId);
+  }
+
+  state.currentLevel = levelData;
+  state.currentLevel.questions = pickQuestions(levelId);
+  state.currentQ = 0;
+  state.hp = 100;
+  state.streak = 0;
+  state.hintsLeft = 2;
+  state.correctCount = 0;
+  state.totalAnswered = 0;
+  state.answered = false;
+  state._xpAtStart = state.xp;
+  state.levelProgress[levelId].plays += 1;
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  document.getElementById('screen-home').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  document.getElementById('screen-results').classList.add('hidden');
+
+  const q = state.currentLevel.questions[state.currentQ];
+  const total = state.currentLevel.questions.length;
+  const progress = ((state.currentQ) / total) * 100;
+
+  const typeLabel = {
+    mc: 'Multiple Choice',
+    tf: 'True or False',
+    fill: 'Fill in the Blank',
+    scenario: 'Scenario'
+  }[q.type] || 'Question';
+
+  let html = `
+    <div class="quiz">
+      <div class="quiz-header">
+        <div class="quiz-header-top">
+          <button class="quiz-back" onclick="confirmExit()">← Quit</button>
+          <div class="quiz-title">${state.currentLevel.short}</div>
+          <div class="quiz-stats">
+            <span class="stat-pill hp">♥ ${state.hp}</span>
+            ${state.streak > 1 ? `<span class="stat-pill streak">🔥 ${state.streak}</span>` : ''}
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+        <div class="progress-text">Question ${state.currentQ + 1} of ${total}</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-type">${typeLabel}${q._from ? ' · ' + q._from : ''}</div>
+        ${q.scenario ? `<div class="q-scenario">${q.scenario}</div>` : ''}
+        <div class="q-text">${q.q}</div>
+        <div id="answer-area"></div>
+        <div id="hint-display"></div>
+        <div id="feedback-area"></div>
+        <div class="hint-row">
+          <button class="hint-btn" id="hint-btn" onclick="useHint()" ${state.hintsLeft <= 0 || state.answered ? 'disabled' : ''}>
+            💡 Hint (${state.hintsLeft} left)
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('screen-quiz').innerHTML = html;
+  renderAnswerArea();
+}
+
+function renderAnswerArea() {
+  const q = state.currentLevel.questions[state.currentQ];
+  const area = document.getElementById('answer-area');
+
+  if (q.type === 'mc' || q.type === 'scenario') {
+    const letters = ['A', 'B', 'C', 'D'];
+    let html = '<div class="options">';
+    q.options.forEach((opt, i) => {
+      html += `
+        <button class="option" onclick="answerMC(${i})" id="opt-${i}">
+          <span class="option-letter">${letters[i]}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+  } else if (q.type === 'tf') {
+    area.innerHTML = `
+      <div class="tf-options">
+        <button class="tf-option" onclick="answerTF(true)" id="tf-true">TRUE</button>
+        <button class="tf-option" onclick="answerTF(false)" id="tf-false">FALSE</button>
+      </div>
+    `;
+  } else if (q.type === 'fill') {
+    area.innerHTML = `
+      <div class="fill-input-wrap">
+        <input type="text" class="fill-input" id="fill-input"
+               placeholder="Type your answer..."
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               onkeydown="if(event.key==='Enter') submitFill()">
+        <button class="submit-btn" onclick="submitFill()">Submit</button>
+      </div>
+    `;
+    setTimeout(() => {
+      const inp = document.getElementById('fill-input');
+      if (inp) inp.focus();
+    }, 100);
+  }
+}
+
+// ============================================================
+// ANSWER HANDLING
+// ============================================================
+
+function answerMC(i) {
+  if (state.answered) return;
+  const q = state.currentLevel.questions[state.currentQ];
+  const correct = i === q.answer;
+
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.disabled = true;
+    if (idx === q.answer) el.classList.add('correct');
+    else if (idx === i && !correct) el.classList.add('incorrect');
+  });
+
+  finalizeAnswer(correct, q);
+}
+
+function answerTF(val) {
+  if (state.answered) return;
+  const q = state.currentLevel.questions[state.currentQ];
+  const correct = val === q.answer;
+
+  document.getElementById('tf-true').disabled = true;
+  document.getElementById('tf-false').disabled = true;
+
+  if (q.answer === true) {
+    document.getElementById('tf-true').classList.add('correct');
+    if (!correct) document.getElementById('tf-false').classList.add('incorrect');
+  } else {
+    document.getElementById('tf-false').classList.add('correct');
+    if (!correct) document.getElementById('tf-true').classList.add('incorrect');
+  }
+
+  finalizeAnswer(correct, q);
+}
+
+function submitFill() {
+  if (state.answered) return;
+  const q = state.currentLevel.questions[state.currentQ];
+  const inp = document.getElementById('fill-input');
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+
+  const correct = q.answer.some(a => {
+    const userClean = val.replace(/[^a-z0-9]/g, '');
+    const ansClean = a.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return val === a.toLowerCase() || userClean === ansClean;
+  });
+  inp.disabled = true;
+  inp.classList.add(correct ? 'correct' : 'incorrect');
+  if (!correct) inp.value = `${inp.value}  →  ${q.answer[0]}`;
+
+  finalizeAnswer(correct, q);
+}
+
+function finalizeAnswer(correct, q) {
+  state.answered = true;
+  state.totalAnswered++;
+  if (correct) {
+    state.correctCount++;
+    state.streak++;
+    state.xp += (10 + (state.hintsLeft < 2 ? 0 : 5));
+    if (state.streak === 3 || state.streak === 5 || state.streak === 7 || state.streak === 10) {
+      showStreakFlash(state.streak);
+    }
+  } else {
+    state.streak = 0;
+    state.hp = Math.max(0, state.hp - 15);
+    if (q.nb && !state.notebook.find(n => n.term === q.nb.term)) {
+      state.notebook.push({ ...q.nb, source: state.currentLevel.short });
+      updateNotebookCount();
+    }
+  }
+
+  const hb = document.getElementById('hint-btn');
+  if (hb) hb.disabled = true;
+
+  const fa = document.getElementById('feedback-area');
+  fa.innerHTML = `
+    <div class="feedback ${correct ? 'correct' : 'incorrect'}">
+      <div class="feedback-header">
+        ${correct ? '✓ Correct!' : '✗ Not quite'}
+      </div>
+      <div class="feedback-text">${q.explanation}</div>
+    </div>
+    <button class="next-btn" onclick="nextQuestion()">
+      ${state.currentQ + 1 >= state.currentLevel.questions.length ? 'See Results' : 'Next Question'} →
+    </button>
+  `;
+}
+
+function nextQuestion() {
+  if (state.currentQ + 1 >= state.currentLevel.questions.length) {
+    showResults();
+  } else {
+    state.currentQ++;
+    state.answered = false;
+    renderQuestion();
+  }
+}
+
+function useHint() {
+  if (state.hintsLeft <= 0 || state.answered) return;
+  state.hintsLeft--;
+
+  const q = state.currentLevel.questions[state.currentQ];
+  let hint = '';
+
+  if (q.type === 'mc' || q.type === 'scenario') {
+    const wrong = q.options.map((_, i) => i).filter(i => i !== q.answer);
+    const toRemove = shuffle(wrong).slice(0, 2);
+    toRemove.forEach(i => {
+      const el = document.getElementById(`opt-${i}`);
+      if (el) { el.style.opacity = '0.3'; el.disabled = true; }
+    });
+    hint = '50/50: Two incorrect options have been dimmed.';
+  } else if (q.type === 'tf') {
+    const firstSentence = q.explanation.split('.')[0];
+    hint = firstSentence + '. (Now think about whether the statement matches that.)';
+  } else if (q.type === 'fill') {
+    const ans = q.answer[0];
+    hint = `It starts with "${ans[0].toUpperCase()}" and has ${ans.length} letters.`;
+  }
+
+  document.getElementById('hint-display').innerHTML = `<div class="hint-text">💡 ${hint}</div>`;
+
+  const hb = document.getElementById('hint-btn');
+  hb.innerHTML = `💡 Hint (${state.hintsLeft} left)`;
+  if (state.hintsLeft <= 0) hb.disabled = true;
+}
+
+function confirmExit() {
+  if (confirm('Quit this level? Your progress will be lost.')) {
+    renderHome();
+  }
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+
+function showResults() {
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-results').classList.remove('hidden');
+
+  const total = state.currentLevel.questions.length;
+  const pct = Math.round((state.correctCount / total) * 100);
+  const cleared = pct >= 80;
+  const lvlId = state.currentLevel.id;
+
+  if (cleared) {
+    state.levelProgress[lvlId].cleared = true;
+    fireConfetti();
+  }
+  if (pct > state.levelProgress[lvlId].best) {
+    state.levelProgress[lvlId].best = pct;
+  }
+
+  let title = cleared ? 'Level Cleared!' : 'Keep Going';
+  let icon = cleared ? '★' : '↻';
+  let sub = cleared
+    ? `You scored ${pct}% — that unlocks the next level. Replay this one anytime for a fresh set of questions.`
+    : `You need 80% to clear this level. Review your notebook and try again — different questions each time.`;
+
+  const xpEarned = state.xp - state._xpAtStart;
+  const replayLabel = `'${typeof lvlId === 'string' ? lvlId : lvlId}'`;
+
+  let html = `
+    <div class="results">
+      <div class="results-icon">${icon}</div>
+      <div class="results-title">${title}</div>
+      <div class="results-sub">${sub}</div>
+
+      <div class="results-stats">
+        <div class="results-stat">
+          <div class="results-stat-value">${pct}%</div>
+          <div class="results-stat-label">Score</div>
+        </div>
+        <div class="results-stat">
+          <div class="results-stat-value">${state.correctCount}/${total}</div>
+          <div class="results-stat-label">Correct</div>
+        </div>
+        <div class="results-stat">
+          <div class="results-stat-value">+${xpEarned}</div>
+          <div class="results-stat-label">XP Earned</div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="action-btn primary" onclick="startLevel(${typeof lvlId === 'string' ? "'"+lvlId+"'" : lvlId})">
+          ${cleared ? 'Replay (New Questions)' : 'Try Again'}
+        </button>
+        <button class="action-btn secondary" onclick="openNotebook()">
+          Review Notebook (${state.notebook.length})
+        </button>
+        <button class="action-btn tertiary" onclick="renderHome()">
+          ← Back to Levels
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('screen-results').innerHTML = html;
+}
+
+// ============================================================
+// NOTEBOOK
+// ============================================================
+
+function openNotebook() {
+  const body = document.getElementById('drawer-body');
+  if (state.notebook.length === 0) {
+    body.innerHTML = `
+      <div class="nb-empty">
+        Your notebook is empty.<br><br>
+        When you miss a question, the key term will be saved here for review.
+      </div>
+    `;
+  } else {
+    body.innerHTML = state.notebook.map(n => `
+      <div class="nb-item">
+        <div class="nb-term">${n.term}</div>
+        <div class="nb-def">${n.def}</div>
+        <div class="nb-source">From: ${n.source}</div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('drawer-backdrop').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeNotebook() {
+  document.getElementById('drawer-backdrop').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+function updateNotebookCount() {
+  document.getElementById('nb-count').textContent = state.notebook.length;
+}
+
+// ============================================================
+// FX
+// ============================================================
+
+function fireConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti';
+  document.body.appendChild(container);
+
+  const colors = ['#003366', '#FDB827', '#fff4d6', '#1a4d80'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = (Math.random() * 0.5) + 's';
+    piece.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+    if (Math.random() > 0.5) piece.style.borderRadius = '50%';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 4000);
+}
+
+function showStreakFlash(n) {
+  const flash = document.createElement('div');
+  flash.className = 'streak-flash';
+  flash.textContent = `${n} in a row!`;
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 1200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderHome();
+updateNotebookCount();
+</script>
+</body>
+</html>
